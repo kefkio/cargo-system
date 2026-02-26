@@ -1,0 +1,5 @@
+2. Access it from WSL
+Open your WSL terminal (Ubuntu, Debian, etc.) and run:
+
+
+cd "/mnt/c/Users/kefak/OneDrive/Desktop/CargoPoint  Proposal/Cargo Management System project/cargo-system"
