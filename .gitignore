@@ -1,16 +1,17 @@
 # Python
+venv/
 __pycache__/
 *.pyc
-*.pyo
-*.pyd
-
-# Virtual environment
-venv/
 
 # Django
 *.sqlite3
-/staticfiles/
+*.log
+*.pot
+*.pyc
 media/
+staticfiles/
 
-# Env files
-.env
+# Node / frontend
+frontend/cargo-frontend/node_modules/
+frontend/cargo-frontend/dist/
+frontend/cargo-frontend/build/
