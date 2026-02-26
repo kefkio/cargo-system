@@ -16,3 +16,5 @@ frontend/cargo-frontend/node_modules/
 frontend/cargo-frontend/dist/
 frontend/cargo-frontend/build/venv/
 frontend/cargo-frontend/node_modules/
+
+accessing wsl.txt
