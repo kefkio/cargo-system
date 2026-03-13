@@ -1,0 +1,39 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ==============================
+   Marquee Animation for Carousel
+   ============================== */
+@keyframes scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+/* Animation class for scrolling items */
+.animate-scroll {
+  display: flex;
+  animation: scroll 25s linear infinite;
+  white-space: nowrap;     /* Keep items in a single line */
+  flex-shrink: 0;          /* Prevent items from compressing */
+}
+
+/* Pause animation on hover */
+.animate-scroll:hover {
+  animation-play-state: paused;
+}
+
+/* Optional: wrapper class to constrain marquee width */
+.marquee-wrapper {
+  width: 100%;             /* Full width of parent */
+  overflow: hidden;        /* Hide items outside the container */
+  position: relative;      /* For positioning if needed */
+}
+
+html, body {
+  overflow-x: hidden;
+}

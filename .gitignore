@@ -1,0 +1,26 @@
+# Python
+venv/
+.venv/
+__pycache__/
+*.pyc
+
+# Django
+*.sqlite3
+*.log
+*.pot
+media/
+staticfiles/
+db.sqlite3
+
+# Node / frontend
+frontend/cargo-frontend/node_modules/
+frontend/cargo-frontend/dist/
+frontend/cargo-frontend/build/
+
+# IDE / editor
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.dbbackend/
