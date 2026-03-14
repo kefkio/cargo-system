@@ -72,8 +72,9 @@ export default function ResetPasswordPage() {
     setIsSubmitting(true);
 
     try {
+      const apiUrl = import.meta.env.VITE_API_URL;
       const res = await axios.post(
-        "http://127.0.0.1:8000/api/auth/password-reset-confirm/",
+        `${apiUrl}/accounts/password-reset-confirm/`,
         {
           uid,
           token,

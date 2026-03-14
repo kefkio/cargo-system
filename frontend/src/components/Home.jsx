@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import LandingPage from "../pages/LandingPage";
 
-const API_URL = import.meta.env.VITE_API_URL; // e.g. http://localhost:8000/api/accounts
+const API_URL = import.meta.env.VITE_API_URL; // e.g. http://localhost:8000/api
 
 // -------------------- REFRESH TOKEN HELPER --------------------
 const refreshToken = async () => {
@@ -11,7 +11,7 @@ const refreshToken = async () => {
   if (!refresh) return null;
 
   try {
-    const res = await fetch(`${API_URL}/token/refresh/`, {
+    const res = await fetch(`${API_URL}/accounts/token/refresh/`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ refresh }),
@@ -48,7 +48,7 @@ export default function Home() {
       }
 
       try {
-        let res = await fetch(`${API_URL}/profile/`, {
+        let res = await fetch(`${API_URL}/accounts/profile/`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -57,7 +57,7 @@ export default function Home() {
           const newAccess = await refreshToken();
           if (newAccess) {
             token = newAccess;
-            res = await fetch(`${API_URL}/profile/`, {
+            res = await fetch(`${API_URL}/accounts/profile/`, {
               headers: { Authorization: `Bearer ${token}` },
             });
           }

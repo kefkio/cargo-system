@@ -7,10 +7,12 @@ export default function PickupRequestsPanel({ token }) {
   const [dispatchData, setDispatchData] = useState({}); // store temp dispatcher info
   const [saving, setSaving] = useState(false);
 
+  const API_URL = import.meta.env.VITE_API_URL;
+
   useEffect(() => {
     const fetchPickups = async () => {
       try {
-        const res = await fetch("http://127.0.0.1:8001/api/admin/pickup-requests/", {
+        const res = await fetch(`${API_URL}/admin/pickup-requests/`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (!res.ok) throw new Error("Failed to fetch pickup requests");
@@ -24,7 +26,7 @@ export default function PickupRequestsPanel({ token }) {
     };
 
     fetchPickups();
-  }, [token]);
+  }, [token, API_URL]);
 
   const handleInputChange = (shipmentId, field, value) => {
     setDispatchData((prev) => ({
@@ -43,7 +45,7 @@ export default function PickupRequestsPanel({ token }) {
     }
     setSaving(true);
     try {
-      const res = await fetch(`http://127.0.0.1:8001/api/admin/pickup-requests/${shipmentId}/dispatch/`, {
+      const res = await fetch(`${API_URL}/admin/pickup-requests/${shipmentId}/dispatch/`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",

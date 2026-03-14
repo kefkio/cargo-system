@@ -21,9 +21,10 @@ export default function ClientDashboard() {
   // Fetch profile, shipments & notifications
   // ------------------------------
   useEffect(() => {
+    const API_URL = import.meta.env.VITE_API_URL;
     const fetchProfile = async () => {
       try {
-        const res = await fetch("http://127.0.0.1:8001/api/auth/profile/", {
+        const res = await fetch(`${API_URL}/accounts/profile/`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (!res.ok) throw new Error("Failed to fetch profile");
@@ -36,7 +37,7 @@ export default function ClientDashboard() {
 
     const fetchShipments = async () => {
       try {
-        const res = await fetch("http://127.0.0.1:8001/api/shipments/client/", {
+        const res = await fetch(`${API_URL}/shipments/client/`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (!res.ok) throw new Error("Failed to fetch shipments");
@@ -49,7 +50,7 @@ export default function ClientDashboard() {
 
     const fetchNotifications = async () => {
       try {
-        const res = await fetch("http://127.0.0.1:8001/api/notifications/", {
+        const res = await fetch(`${API_URL}/notifications/`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (!res.ok) throw new Error("Failed to fetch notifications");

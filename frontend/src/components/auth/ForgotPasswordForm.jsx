@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
-const BASE_URL = "http://127.0.0.1:8000/api/accounts";
+const BASE_URL = import.meta.env.VITE_API_URL ? `${import.meta.env.VITE_API_URL}/accounts` : "http://localhost:8000/api/accounts";
 
 export default function ResetPasswordPage() {
   const { uid, token } = useParams();

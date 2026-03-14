@@ -10,15 +10,15 @@ import QRCode from "react-qr-code";
 export default function AdminDashboard() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
-  const [shipments] = useState(() => [
+  const [shipments] = useState([
     { id: 1, status: "In Transit", timestamps: { "Pickup Requested": "2026-03-10 09:00" } },
     { id: 2, status: "Delivered", timestamps: { "Delivered": "2026-03-09 14:00" } },
   ]);
-  const [pickupRequests] = useState(() => [
+  const [pickupRequests] = useState([
     { id: 1, client: "John Doe", address: "Nairobi", requestedAt: "2026-03-10 08:00" },
     { id: 2, client: "Jane Smith", address: "Mombasa", requestedAt: "2026-03-10 09:30" },
   ]);
-  const [qrValue] = useState("https://firstpointcargo.com");
+  const qrValue = "https://firstpointcargo.com";
 
   const API_URL = import.meta.env.VITE_API_URL;
 
@@ -27,7 +27,7 @@ export default function AdminDashboard() {
     const token = localStorage.getItem("access");
     if (!token) return navigate("/login");
 
-    fetch(`${API_URL}/auth/profile/`, {
+    fetch(`${API_URL}/accounts/profile/`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())

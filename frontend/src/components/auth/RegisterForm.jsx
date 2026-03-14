@@ -6,43 +6,12 @@ import { FaEye, FaEyeSlash, FaGoogle, FaFacebook, FaApple } from "react-icons/fa
 import { Link, useNavigate } from "react-router-dom";
 import custImage from "../../assets/images/Customersimagea.png"; // ✅ Correct path
 import { useAuth } from "../../hooks/useAuth"; // ✅ Correct relative path
+import { registerUser } from "../../api/api";
 
-const BASE_URL = `http://localhost:8000/api/auth`;
-
-/* ---------- SAFE RESPONSE PARSER ---------- */
-const parseResponse = async (res) => {
-  const contentType = res.headers.get("content-type");
-  if (contentType && contentType.includes("application/json")) {
-    return await res.json();
-  }
-  const text = await res.text();
-  return text ? { detail: text } : {};
-};
-
-/* ---------- REGISTER USER ---------- */
-const registerUser = async (userData) => {
-  const res = await fetch(`${BASE_URL}/register/`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(userData),
-  });
-
-  const data = await parseResponse(res);
-
-  if (!res.ok) {
-    throw new Error(
-      Object.entries(data)
-        .map(([k, v]) => `${k}: ${v}`)
-        .join("\n") || "Registration failed"
-    );
-  }
-
-  return data;
-};
 
 export default function RegisterForm() {
   const navigate = useNavigate();
-  const { loginUser, getProfile } = useAuth();
+  const { login } = useAuth();
 
   const [formData, setFormData] = useState({
     firstName: "",
@@ -107,14 +76,8 @@ export default function RegisterForm() {
       });
 
       // 2️⃣ Login using hook
-      await loginUser(formData.email, formData.password);
-
-      // 3️⃣ Get stored access token
-      const accessToken = localStorage.getItem("access");
-
-      // 4️⃣ Fetch profile
-      const profile = await getProfile(accessToken);
-      setSuccess(`Welcome ${profile.first_name || profile.email}!`);
+      const profile = await login(formData.email, formData.password);
+      setSuccess(`Welcome ${profile.first_name || profile.email || profile.username}!`);
 
       // 5️⃣ Redirect based on role
       setTimeout(() => {

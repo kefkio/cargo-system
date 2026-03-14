@@ -13,7 +13,7 @@ export default function PasswordForm({
   const [message, setMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const BASE_URL = "http://127.0.0.1:8000/api";
+  const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000/api";
 
   const validatePasswordStrength = (password) => {
     const errs = [];

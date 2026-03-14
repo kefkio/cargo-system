@@ -5,8 +5,6 @@ import ShipmentLifecycle from "../admin/charts/ShipmentLifecycle"; // reuse
 import PickupRequestsPanel from "../admin/PickupRequestsPanel";
 import { FaBox, FaTruck, FaCheckCircle, FaTimesCircle } from "react-icons/fa";
 
-const API_URL = import.meta.env.VITE_API_URL;
-
 export default function ClientDashboard() {
   const navigate = useNavigate();
   const [profile, setProfile] = useState(null);
@@ -15,12 +13,13 @@ export default function ClientDashboard() {
 
   // Fetch profile and shipments
   useEffect(() => {
+    const API_URL = import.meta.env.VITE_API_URL;
     const token = localStorage.getItem("access");
     if (!token) return navigate("/login");
 
     const fetchProfile = async () => {
       try {
-        const res = await fetch(`${API_URL}/auth/profile/`, {
+        const res = await fetch(`${API_URL}/accounts/profile/`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = await res.json();
