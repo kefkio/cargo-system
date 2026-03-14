@@ -28,7 +28,7 @@ export default function ClientsPanel() {
     }
 
     fetchClients();
-  }, []);
+  }, [API_URL]);
 
   if (loading) return <p>Loading clients...</p>;
   if (error) return <p className="text-red-500">{error}</p>;

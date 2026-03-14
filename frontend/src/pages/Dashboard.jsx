@@ -3,21 +3,18 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function Dashboard() {
-  const [username, setUsername] = useState("");
+  const [username] = useState(() => localStorage.getItem("username") || "");
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
     const accessToken = localStorage.getItem("access_token");
-    const storedUsername = localStorage.getItem("username");
 
     if (!accessToken) {
       // Not logged in, redirect to login page
       navigate("/login");
       return;
     }
-
-    setUsername(storedUsername);
 
     // Fetch protected API data
     const fetchProtectedData = async () => {

@@ -29,7 +29,7 @@ export default function ShipmentsPanel() {
     }
 
     fetchShipments();
-  }, []);
+  }, [API_URL]);
 
   if (loading) return <p>Loading shipments...</p>;
   if (error) return <p className="text-red-500">{error}</p>;

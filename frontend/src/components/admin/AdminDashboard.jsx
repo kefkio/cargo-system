@@ -10,9 +10,15 @@ import QRCode from "react-qr-code";
 export default function AdminDashboard() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
-  const [shipments, setShipments] = useState([]);
-  const [pickupRequests, setPickupRequests] = useState([]);
-  const [qrValue, setQrValue] = useState("https://firstpointcargo.com");
+  const [shipments] = useState(() => [
+    { id: 1, status: "In Transit", timestamps: { "Pickup Requested": "2026-03-10 09:00" } },
+    { id: 2, status: "Delivered", timestamps: { "Delivered": "2026-03-09 14:00" } },
+  ]);
+  const [pickupRequests] = useState(() => [
+    { id: 1, client: "John Doe", address: "Nairobi", requestedAt: "2026-03-10 08:00" },
+    { id: 2, client: "Jane Smith", address: "Mombasa", requestedAt: "2026-03-10 09:30" },
+  ]);
+  const [qrValue] = useState("https://firstpointcargo.com");
 
   const API_URL = import.meta.env.VITE_API_URL;
 
@@ -31,21 +37,6 @@ export default function AdminDashboard() {
         navigate("/login");
       });
   }, [navigate, API_URL]);
-
-  // Dummy fetch for shipments
-  useEffect(() => {
-    // Replace with real API call
-    setShipments([
-      { id: 1, status: "In Transit", timestamps: { "Pickup Requested": "2026-03-10 09:00" } },
-      { id: 2, status: "Delivered", timestamps: { "Delivered": "2026-03-09 14:00" } },
-    ]);
-
-    // Replace with real API call for pickup requests
-    setPickupRequests([
-      { id: 1, client: "John Doe", address: "Nairobi", requestedAt: "2026-03-10 08:00" },
-      { id: 2, client: "Jane Smith", address: "Mombasa", requestedAt: "2026-03-10 09:30" },
-    ]);
-  }, []);
 
   const handleLogout = () => {
     localStorage.removeItem("access");

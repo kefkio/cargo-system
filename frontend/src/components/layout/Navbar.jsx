@@ -3,18 +3,13 @@ import React, { useState, useEffect, useRef } from "react";
 import { FaSearch, FaBars } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 
-export default function Navbar({ isSideNavOpen, setIsSideNavOpen }) {
+export default function Navbar({ setIsSideNavOpen }) {
   const [activeSection, setActiveSection] = useState("hero");
   const [searchQuery, setSearchQuery] = useState("");
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(() => !!localStorage.getItem("access"));
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const token = localStorage.getItem("access");
-    setIsLoggedIn(!!token);
-  }, []);
 
   useEffect(() => {
     const sections = document.querySelectorAll("section[id]");

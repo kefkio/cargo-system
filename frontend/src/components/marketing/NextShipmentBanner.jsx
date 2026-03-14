@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 
 // Example shipment schedule
 const shipmentSchedule = [
@@ -10,19 +10,14 @@ const shipmentSchedule = [
 ];
 
 export default function NextShipmentBanner() {
-  const [nextShipments, setNextShipments] = useState([]);
-
-  useEffect(() => {
+  const nextShipments = React.useMemo(() => {
     const today = new Date();
 
-    // Filter future shipments, sort ascending
-    const upcoming = shipmentSchedule
-      .map(s => ({ ...s, dateObj: new Date(s.shipmentDate) }))
-      .filter(s => s.dateObj >= today)
+    return shipmentSchedule
+      .map((s) => ({ ...s, dateObj: new Date(s.shipmentDate) }))
+      .filter((s) => s.dateObj >= today)
       .sort((a, b) => a.dateObj - b.dateObj)
-      .slice(0, 2); // Take only next 2 shipments
-
-    setNextShipments(upcoming);
+      .slice(0, 2);
   }, []);
 
   if (nextShipments.length === 0) return null;

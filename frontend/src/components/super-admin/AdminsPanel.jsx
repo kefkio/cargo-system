@@ -28,7 +28,7 @@ export default function AdminsPanel() {
     }
 
     fetchAdmins();
-  }, []);
+  }, [API_URL]);
 
   if (loading) return <p>Loading admins...</p>;
   if (error) return <p className="text-red-500">{error}</p>;

@@ -147,6 +147,7 @@ export default function ClientDashboard() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-gray-100 flex flex-col font-inter text-gray-800 scroll-smooth">
+      <div className="fixed top-0 left-0 h-1 bg-blue-500 z-50" style={{ width: `${scrollProgress}%` }} />
       {/* Navbar with notifications */}
       <ClientNavbar notifications={notifications} unreadCount={unreadCount} />
 
@@ -161,6 +162,9 @@ export default function ClientDashboard() {
             Welcome, {profile?.username || "Client"}
           </h1>
           <p className="text-gray-600 mt-1">Here’s a summary of your shipments</p>
+          <p className="text-sm text-gray-500 mt-2">
+            You have <span className="font-semibold text-gray-800"><CountUp value={shipments.length} /></span> active shipments.
+          </p>
         </div>
       </FadeInSection>
 

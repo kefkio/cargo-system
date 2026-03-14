@@ -13,7 +13,7 @@ import ShipFromWalmart from "./pages/seo/ship-from-walmart-to-kenya";
 import ShipFromBestBuy from "./pages/seo/ship-from-bestbuy-to-kenya";
 import AirFreight from "./pages/seo/air-freight-usa-to-kenya";
 import SeaFreight from "./pages/seo/sea-freight-usa-to-kenya";
-import ShippingCalculatorPage from "./pages/seo/shipping-calculator-usa-to-kenya";
+
 
 // Auth components
 import RegisterForm from "./components/auth/RegisterForm";
@@ -116,8 +116,7 @@ function App({ user }) {
           <Route path="/seo/ship-from-bestbuy-to-kenya" element={<ShipFromBestBuy />} />
           <Route path="/seo/air-freight-usa-to-kenya" element={<AirFreight />} />
           <Route path="/seo/sea-freight-usa-to-kenya" element={<SeaFreight />} />
-          <Route path="/seo/shipping-calculator-usa-to-kenya" element={<ShippingCalculatorPage />} />
-
+          
           {/* Auth Pages */}
           <Route path="/register" element={<RegisterForm />} />
           <Route path="/login" element={<LoginForm />} />

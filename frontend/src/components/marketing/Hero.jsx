@@ -5,6 +5,15 @@ import PickupRequest from "../shipment/PickupRequest";
 const Hero = () => {
   const [trackingNumber, setTrackingNumber] = useState("");
   const [scrollY, setScrollY] = useState(0);
+  const [bubbleData] = useState(() =>
+    [...Array(6)].map((_, i) => ({
+      width: 40 + i * 20,
+      height: 40 + i * 20,
+      top: `${Math.random() * 80}%`,
+      left: `${Math.random() * 90}%`,
+      animationDelay: `${i * 2}s`,
+    }))
+  );
   const [visible, setVisible] = useState({
     headline: false,
     subheadline: false,
@@ -40,16 +49,16 @@ const Hero = () => {
     <section className="relative bg-gradient-to-br from-blue-900 to-blue-700 text-white py-16 md:py-28 overflow-hidden">
       {/* Animated Bubbles with Parallax */}
       <div className="absolute inset-0 pointer-events-none">
-        {[...Array(6)].map((_, i) => (
+        {bubbleData.map((bubble, i) => (
           <span
             key={i}
             className="absolute bg-white bg-opacity-10 rounded-full animate-bubble"
             style={{
-              width: `${40 + i * 20}px`,
-              height: `${40 + i * 20}px`,
-              top: `${Math.random() * 80}%`,
-              left: `${Math.random() * 90}%`,
-              animationDelay: `${i * 2}s`,
+              width: `${bubble.width}px`,
+              height: `${bubble.height}px`,
+              top: bubble.top,
+              left: bubble.left,
+              animationDelay: bubble.animationDelay,
               transform: `translateY(${scrollY * 0.1 * (i + 1)}px)`,
             }}
           ></span>
