@@ -1,5 +1,7 @@
 // src/components/shipment/PickupRequest.jsx
 import React, { useState, useEffect } from "react";
+import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/style.css";
 
 const US_STATES = [
   ["AL","Alabama"],["AK","Alaska"],["AZ","Arizona"],["AR","Arkansas"],["CA","California"],
@@ -53,6 +55,7 @@ export default function PickupRequest({ onClose }) {
       if (!form.name.trim()) newErrors.name = "Full name is required";
       if (!form.email.trim() || !/\S+@\S+\.\S+/.test(form.email)) newErrors.email = "Valid email required";
       if (!form.phone.trim()) newErrors.phone = "Phone number is required";
+      
     }
     if (step === 1) {
       if (!form.street.trim()) newErrors.street = "Street address is required";
@@ -252,14 +255,30 @@ export default function PickupRequest({ onClose }) {
                           className={fieldClass("email")} />
                         {errors.email && <p id="email-error" role="alert" className="text-xs text-red-500 mt-1">{errors.email}</p>}
                       </div>
-                      <div>
-                        <label htmlFor="phone" className="block text-xs font-semibold text-gray-600 mb-1">Phone Number</label>
-                        <input id="phone" type="tel" name="phone" value={form.phone} onChange={handleChange}
-                          placeholder="+1 (555) 000-0000" required autoComplete="tel"
-                          aria-describedby={errors.phone ? "phone-error" : undefined}
-                          className={fieldClass("phone")} />
-                        {errors.phone && <p id="phone-error" role="alert" className="text-xs text-red-500 mt-1">{errors.phone}</p>}
-                      </div>
+                    <div>
+  <label htmlFor="phone" className="block text-xs font-semibold text-gray-600 mb-1">
+    Phone Number
+  </label>
+  <PhoneInput
+    country={"us"} // default country
+    value={form.phone}
+    onChange={(phone) => setForm((prev) => ({ ...prev, phone: "+" + phone }))}
+    inputProps={{
+      name: "phone",
+      required: true,
+      autoComplete: "tel",
+      id: "phone",
+      "aria-describedby": errors.phone ? "phone-error" : undefined,
+    }}
+    containerClass="w-full"
+    inputClass="!w-full !py-3 !pl-14 !rounded-xl !border !border-gray-200 !bg-white/70 !text-gray-900 !text-sm focus:!border-indigo-400"
+  />
+  {errors.phone && (
+    <p id="phone-error" role="alert" className="text-xs text-red-500 mt-1">
+      {errors.phone}
+    </p>
+  )}
+</div>
                     </>
                   )}
 
@@ -349,17 +368,28 @@ export default function PickupRequest({ onClose }) {
                       </div>
 
                       <div>
-                        <label htmlFor="contactPhone" className="block text-xs font-semibold text-gray-600 mb-1">
-                          Contact Person Phone
-                          <span className="font-normal text-gray-400 ml-1">(optional)</span>
-                        </label>
-                        <input id="contactPhone" type="tel" name="contactPhone" value={form.contactPhone}
-                          onChange={handleChange} autoComplete="off"
-                          placeholder="+1 (555) 000-0000"
-                          aria-describedby={errors.contactPhone ? "contact-phone-error" : undefined}
-                          className={fieldClass("contactPhone")} />
-                        {errors.contactPhone && <p id="contact-phone-error" role="alert" className="text-xs text-red-500 mt-1">{errors.contactPhone}</p>}
-                      </div>
+  <label htmlFor="contactPhone" className="block text-xs font-semibold text-gray-600 mb-1">
+    Contact Person Phone <span className="font-normal text-gray-400 ml-1">(optional)</span>
+  </label>
+  <PhoneInput
+    country={"us"}
+    value={form.contactPhone}
+    onChange={(phone) => setForm((prev) => ({ ...prev, contactPhone: "+" + phone }))}
+    inputProps={{
+      name: "contactPhone",
+      autoComplete: "tel",
+      id: "contactPhone",
+      "aria-describedby": errors.contactPhone ? "contact-phone-error" : undefined,
+    }}
+    containerClass="w-full"
+    inputClass="!w-full !py-3 !pl-14 !rounded-xl !border !border-gray-200 !bg-white/70 !text-gray-900 !text-sm focus:!border-indigo-400"
+  />
+  {errors.contactPhone && (
+    <p id="contact-phone-error" role="alert" className="text-xs text-red-500 mt-1">
+      {errors.contactPhone}
+    </p>
+  )}
+</div>
                     </>
                   )}
                 </div>

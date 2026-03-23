@@ -3,11 +3,11 @@ import { Navigate } from "react-router-dom";
 import { AuthContext } from "../auth/AuthContext";
 
 export default function ProtectedRoute({ children, allowedRoles }) {
-  const { user } = useContext(AuthContext);
+  const { user, loading } = useContext(AuthContext);
 
-  if (!user) {
-    return <Navigate to="/login" replace />;
-  }
+  if (loading) return <div>Loading...</div>; // wait for user fetch
+
+  if (!user) return <Navigate to="/login" replace />;
 
   if (allowedRoles && !allowedRoles.includes(user.role)) {
     return <Navigate to="/" replace />;

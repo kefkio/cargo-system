@@ -27,12 +27,21 @@ export default function LoginForm() {
 
   /* -------------------- REDIRECT BY ROLE -------------------- */
   const redirectByRole = (role) => {
-    const r = role?.toUpperCase();
+    const normalized = role?.toUpperCase();
 
-    if (r === "CLIENT") navigate("/dashboard/client");
-    else if (r === "ADMIN") navigate("/admin-dashboard");
-    else if (r === "STAFF") navigate("/staff-dashboard");
-    else navigate("/");
+    if (normalized === "SUPERADMIN") {
+      navigate("/dashboard/super-admin");
+    } else if (normalized === "CARGOADMIN" || normalized === "ADMIN") {
+      // Some legacy or test users may have used 'ADMIN' as a role value
+      navigate("/dashboard/admin");
+    } else if (normalized === "CLIENTADMIN" || normalized === "STAFF") {
+      // Some legacy or test users may have used 'STAFF' as a role value
+      navigate("/dashboard/staff");
+    } else if (normalized === "CLIENT") {
+      navigate("/dashboard/client");
+    } else {
+      navigate("/");
+    }
   };
 
   /* -------------------- HANDLE LOGIN -------------------- */

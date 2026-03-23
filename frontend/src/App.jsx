@@ -1,5 +1,6 @@
 // src/App.jsx
-import React, { useState, useEffect, lazy, Suspense } from "react";
+import React, { useState, useEffect, useRef, lazy, Suspense } from "react";
+import ErrorBoundary from "./components/ErrorBoundary";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 // Pages
@@ -14,152 +15,189 @@ import ShipFromBestBuy from "./pages/seo/ship-from-bestbuy-to-kenya";
 import AirFreight from "./pages/seo/air-freight-usa-to-kenya";
 import SeaFreight from "./pages/seo/sea-freight-usa-to-kenya";
 
-
 // Auth components
 import RegisterForm from "./components/auth/RegisterForm";
 import LoginForm from "./components/auth/LoginForm";
 import ForgotPasswordForm from "./components/auth/ForgotPasswordForm";
 import TermsPrivacy from "./components/TermsPrivacy";
 
-// ProtectedRoute
+// Route protection
 import ProtectedRoute from "./routes/ProtectedRoute";
 
-// Lazy-loaded dashboards
+// Lazy-loaded dashboards & tools
 const ClientDashboard = lazy(() => import("./components/client/ClientDashboard"));
 const AdminDashboard = lazy(() => import("./components/admin/AdminDashboard"));
+const WarehouseManagement = lazy(() => import("./components/admin/WarehouseManagement"));
+const CreateShipment = lazy(() => import("./components/admin/CreateShipment")); // ✅ Using admin CreateShipment
 const StaffDashboard = lazy(() => import("./components/staff/StaffDashboard"));
+const StaffPickupRequest = lazy(() => import("./components/shipment/PickupRequest"));
 const SuperAdminDashboard = lazy(() => import("./components/super-admin/SuperAdminDashboard"));
 
-// Optional modal on LandingPage
+// Modal
 import ContactModal from "./components/ContactModal";
 
 function App({ user }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [hasShown, setHasShown] = useState(false);
+  const hasShownRef = useRef(false);
 
-  // Contact modal timer & IP check
   useEffect(() => {
     if (user?.isLoggedIn) return;
     if (localStorage.getItem("disableContactModal") === "true") return;
     if (sessionStorage.getItem("contactModalShown")) return;
 
-    async function checkVisitor() {
-      try {
-        const res = await fetch("https://ipapi.co/json/");
-        const data = await res.json();
-        const visitorKey = `visitor_${data.ip}`;
-        if (!localStorage.getItem(visitorKey)) {
-          localStorage.setItem(visitorKey, "true");
-        }
-      } catch (err) {
-        console.error("IP check failed:", err);
+    let timer;
+
+    const showModal = () => {
+      if (!hasShownRef.current) {
+        hasShownRef.current = true;
+        setIsModalOpen(true);
+        sessionStorage.setItem("contactModalShown", "true");
       }
+    };
 
-      let timer;
-      const resetTimer = () => {
-        clearTimeout(timer);
-        timer = setTimeout(() => {
-          if (!hasShown) {
-            setIsModalOpen(true);
-            setHasShown(true);
-            sessionStorage.setItem("contactModalShown", "true");
-          }
-        }, 60000);
-      };
+    const resetTimer = () => {
+      clearTimeout(timer);
+      timer = setTimeout(showModal, 60000);
+    };
 
-      window.addEventListener("mousemove", resetTimer);
-      window.addEventListener("keydown", resetTimer);
-      resetTimer();
+    const handleMouseLeave = (e) => {
+      if (e.clientY < 10) showModal();
+    };
 
-      const handleMouseLeave = (e) => {
-        if (e.clientY < 10 && !hasShown) {
-          setIsModalOpen(true);
-          setHasShown(true);
-          sessionStorage.setItem("contactModalShown", "true");
-        }
-      };
-      document.addEventListener("mouseleave", handleMouseLeave);
+    // Visitor IP check
+    fetch("https://ipapi.co/json/")
+      .then((res) => res.json())
+      .then((data) => {
+        const visitorKey = `visitor_${data.ip}`;
+        if (!localStorage.getItem(visitorKey)) localStorage.setItem(visitorKey, "true");
+      })
+      .catch((err) => console.error("IP check failed:", err));
 
-      return () => {
-        clearTimeout(timer);
-        window.removeEventListener("mousemove", resetTimer);
-        window.removeEventListener("keydown", resetTimer);
-        document.removeEventListener("mouseleave", handleMouseLeave);
-      };
-    }
+    window.addEventListener("mousemove", resetTimer);
+    window.addEventListener("keydown", resetTimer);
+    document.addEventListener("mouseleave", handleMouseLeave);
+    resetTimer();
 
-    checkVisitor();
-  }, [user, hasShown]);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("mousemove", resetTimer);
+      window.removeEventListener("keydown", resetTimer);
+      document.removeEventListener("mouseleave", handleMouseLeave);
+    };
+  }, [user]);
 
   return (
-    <Router>
-      <Suspense fallback={<div>Loading...</div>}>
-        <Routes>
-          {/* Landing Page */}
-          <Route
-            path="/"
-            element={
-              <>
-                <LandingPage />
-                <ContactModal
-                  isOpen={isModalOpen}
-                  onClose={() => setIsModalOpen(false)}
-                />
-              </>
-            }
-          />
+    <ErrorBoundary>
+      <Router>
+        <Suspense
+          fallback={
+            <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+              Loading...
+            </div>
+          }
+        >
+          <Routes>
+            {/* Landing */}
+            <Route
+              path="/"
+              element={
+                <>
+                  <LandingPage />
+                  <ContactModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+                </>
+              }
+            />
 
-          {/* SEO Pages */}
-          <Route path="/seo/ship-from-amazon-to-kenya" element={<ShipFromAmazon />} />
-          <Route path="/seo/ship-from-ebay-to-kenya" element={<ShipFromEbay />} />
-          <Route path="/seo/ship-from-walmart-to-kenya" element={<ShipFromWalmart />} />
-          <Route path="/seo/ship-from-bestbuy-to-kenya" element={<ShipFromBestBuy />} />
-          <Route path="/seo/air-freight-usa-to-kenya" element={<AirFreight />} />
-          <Route path="/seo/sea-freight-usa-to-kenya" element={<SeaFreight />} />
-          
-          {/* Auth Pages */}
-          <Route path="/register" element={<RegisterForm />} />
-          <Route path="/login" element={<LoginForm />} />
-          <Route path="/forgot-password" element={<ForgotPasswordForm />} />
-          <Route path="/reset-password/:uid/:token" element={<ResetPasswordPage />} />
-          <Route path="/terms-privacy" element={<TermsPrivacy />} />
+            {/* SEO Pages */}
+            <Route path="/seo/ship-from-amazon-to-kenya" element={<ShipFromAmazon />} />
+            <Route path="/seo/ship-from-ebay-to-kenya" element={<ShipFromEbay />} />
+            <Route path="/seo/ship-from-walmart-to-kenya" element={<ShipFromWalmart />} />
+            <Route path="/seo/ship-from-bestbuy-to-kenya" element={<ShipFromBestBuy />} />
+            <Route path="/seo/air-freight-usa-to-kenya" element={<AirFreight />} />
+            <Route path="/seo/sea-freight-usa-to-kenya" element={<SeaFreight />} />
 
-          {/* Dashboards with role-based access */}
-          <Route
-            path="/dashboard/client"
-            element={
-              <ProtectedRoute allowedRoles={["CLIENT"]}>
-                <ClientDashboard />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/dashboard/admin"
-            element={
-              <ProtectedRoute allowedRoles={["CARGOADMIN"]}>
-                <AdminDashboard />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/dashboard/staff"
-            element={
-              <ProtectedRoute allowedRoles={["CLIENTADMIN"]}>
-                <StaffDashboard />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/dashboard/super-admin"
-            element={
-              <ProtectedRoute allowedRoles={["SUPERADMIN"]}>
-                <SuperAdminDashboard />
-              </ProtectedRoute>
-            }
-          />
-        </Routes>
-      </Suspense>
-    </Router>
+            {/* Auth */}
+            <Route path="/register" element={<RegisterForm />} />
+            <Route path="/login" element={<LoginForm />} />
+            <Route path="/forgot-password" element={<ForgotPasswordForm />} />
+            <Route path="/reset-password/:uid/:token" element={<ResetPasswordPage />} />
+            <Route path="/terms-privacy" element={<TermsPrivacy />} />
+
+            {/* Client */}
+            <Route
+              path="/dashboard/client"
+              element={
+                <ProtectedRoute allowedRoles={["CLIENT"]}>
+                  <ClientDashboard />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Admin */}
+            <Route
+              path="/dashboard/admin"
+              element={
+                <ProtectedRoute allowedRoles={["CARGOADMIN", "ADMIN"]}>
+                  <AdminDashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/warehouses"
+              element={
+                <ProtectedRoute allowedRoles={["CARGOADMIN", "ADMIN"]}>
+                  <WarehouseManagement />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/create-shipment"
+              element={
+                <ProtectedRoute allowedRoles={["CARGOADMIN", "ADMIN"]}>
+                  <CreateShipment />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Staff */}
+            <Route
+              path="/dashboard/staff"
+              element={
+                <ProtectedRoute allowedRoles={["CLIENTADMIN", "STAFF"]}>
+                  <StaffDashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/staff/pickups"
+              element={
+                <ProtectedRoute allowedRoles={["CLIENTADMIN", "CARGOADMIN", "SUPERADMIN", "STAFF"]}>
+                  <StaffPickupRequest />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/staff/create-shipment"
+              element={
+                <ProtectedRoute allowedRoles={["CARGOADMIN", "ADMIN", "STAFF"]}>
+                  <CreateShipment />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Super Admin */}
+            <Route
+              path="/dashboard/super-admin"
+              element={
+                <ProtectedRoute allowedRoles={["SUPERADMIN"]}>
+                  <SuperAdminDashboard />
+                </ProtectedRoute>
+              }
+            />
+          </Routes>
+        </Suspense>
+      </Router>
+    </ErrorBoundary>
   );
 }
 

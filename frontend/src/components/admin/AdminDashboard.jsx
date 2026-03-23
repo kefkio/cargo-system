@@ -10,32 +10,53 @@ import QRCode from "react-qr-code";
 export default function AdminDashboard() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
-  const [shipments] = useState([
-    { id: 1, status: "In Transit", timestamps: { "Pickup Requested": "2026-03-10 09:00" } },
-    { id: 2, status: "Delivered", timestamps: { "Delivered": "2026-03-09 14:00" } },
-  ]);
-  const [pickupRequests] = useState([
-    { id: 1, client: "John Doe", address: "Nairobi", requestedAt: "2026-03-10 08:00" },
-    { id: 2, client: "Jane Smith", address: "Mombasa", requestedAt: "2026-03-10 09:30" },
-  ]);
+  const [stats, setStats] = useState(null);
+  const [shipments, setShipments] = useState([]);
+  const [pickupRequests, setPickupRequests] = useState([]);
+  const [loading, setLoading] = useState(true);
   const qrValue = "https://firstpointcargo.com";
 
   const API_URL = import.meta.env.VITE_API_URL;
 
-  // Fetch admin profile
   useEffect(() => {
     const token = localStorage.getItem("access");
     if (!token) return navigate("/login");
 
-    fetch(`${API_URL}/accounts/profile/`, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then((res) => res.json())
-      .then(setUser)
-      .catch((err) => {
-        console.error("Failed to fetch profile:", err);
-        navigate("/login");
-      });
+    async function fetchData() {
+      try {
+        const profileRes = await fetch(`${API_URL}/accounts/profile/`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (!profileRes.ok) throw new Error("Failed to fetch profile");
+        const profile = await profileRes.json();
+        setUser(profile);
+
+        const [statsRes, shipmentsRes, pickupRes] = await Promise.all([
+          fetch(`${API_URL}/shipments/admin/stats/`, { headers: { Authorization: `Bearer ${token}` } }),
+          fetch(`${API_URL}/shipments/admin/recent-shipments/`, { headers: { Authorization: `Bearer ${token}` } }),
+          fetch(`${API_URL}/shipments/admin/pickup-requests/`, { headers: { Authorization: `Bearer ${token}` } }),
+        ]);
+
+        if (statsRes.ok) {
+          setStats(await statsRes.json());
+        }
+
+        if (shipmentsRes.ok) {
+          setShipments(await shipmentsRes.json());
+        }
+
+        if (pickupRes.ok) {
+          setPickupRequests(await pickupRes.json());
+        }
+      } catch (err) {
+        console.error("Admin data fetch failed:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchData();
   }, [navigate, API_URL]);
 
   const handleLogout = () => {
@@ -63,37 +84,66 @@ export default function AdminDashboard() {
 
       {/* Dashboard content */}
       <main className="flex-1 p-6 space-y-6">
-        {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div className="bg-white shadow p-4 rounded flex items-center gap-3">
-            <FaUsers className="text-2xl text-primary" />
-            <div>
-              <p className="text-sm text-gray-500">Clients</p>
-              <p className="text-lg font-bold">42</p>
+        {loading ? (
+          <div className="text-center py-20">Loading admin dashboard...</div>
+        ) : (
+          <>
+            {/* Stats */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div className="bg-white shadow p-4 rounded flex items-center gap-3">
+                <FaUsers className="text-2xl text-primary" />
+                <div>
+                  <p className="text-sm text-gray-500">Clients</p>
+                  <p className="text-lg font-bold">{stats?.totalClients ?? "—"}</p>
+                </div>
+              </div>
+              <div className="bg-white shadow p-4 rounded flex items-center gap-3">
+                <FaBox className="text-2xl text-primary" />
+                <div>
+                  <p className="text-sm text-gray-500">Shipments</p>
+                  <p className="text-lg font-bold">{stats?.totalShipments ?? shipments.length}</p>
+                </div>
+              </div>
+              <div className="bg-white shadow p-4 rounded flex items-center gap-3">
+                <FaDollarSign className="text-2xl text-primary" />
+                <div>
+                  <p className="text-sm text-gray-500">Total Weight (kg)</p>
+                  <p className="text-lg font-bold">{stats?.totalRevenue ?? "—"}</p>
+                </div>
+              </div>
+              <div className="bg-white shadow p-4 rounded flex items-center gap-3">
+                <FaChartLine className="text-2xl text-primary" />
+                <div>
+                  <p className="text-sm text-gray-500">Active Shipments</p>
+                  <p className="text-lg font-bold">{stats?.activeShipments ?? "—"}</p>
+                </div>
+              </div>
             </div>
-          </div>
-          <div className="bg-white shadow p-4 rounded flex items-center gap-3">
-            <FaBox className="text-2xl text-primary" />
-            <div>
-              <p className="text-sm text-gray-500">Shipments</p>
-              <p className="text-lg font-bold">{shipments.length}</p>
-            </div>
-          </div>
-          <div className="bg-white shadow p-4 rounded flex items-center gap-3">
-            <FaDollarSign className="text-2xl text-primary" />
-            <div>
-              <p className="text-sm text-gray-500">Revenue</p>
-              <p className="text-lg font-bold">$12,430</p>
-            </div>
-          </div>
-          <div className="bg-white shadow p-4 rounded flex items-center gap-3">
-            <FaChartLine className="text-2xl text-primary" />
-            <div>
-              <p className="text-sm text-gray-500">Performance</p>
-              <p className="text-lg font-bold">85%</p>
-            </div>
-          </div>
-        </div>
+
+            {/* Recent Shipments */}
+            <section className="bg-white shadow p-6 rounded">
+              <h2 className="text-lg font-semibold mb-4">Recent Shipments</h2>
+              {shipments.length === 0 ? (
+                <p className="text-gray-500">No recent shipments found.</p>
+              ) : (
+                shipments.map((s) => (
+                  <div key={s.id} className="mb-4 border rounded p-4">
+                    <p className="font-semibold">Tracking ID: {s.tracking_number || s.id}</p>
+                    <p>Status: {s.status}</p>
+                    <ShipmentLifecycle status={s.status} timestamps={s.timestamps || {}} />
+                  </div>
+                ))
+              )}
+            </section>
+
+            {/* Pickup Requests */}
+            <section className="bg-white shadow p-6 rounded">
+              <h2 className="text-lg font-semibold mb-4">Pickup Requests</h2>
+              <PickupRequestsPanel token={localStorage.getItem("access")} />
+            </section>
+          </>
+        )}
+
 
         {/* Shipments */}
         <section className="bg-white shadow p-6 rounded">

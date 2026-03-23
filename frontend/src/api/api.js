@@ -3,7 +3,7 @@ import { apiRequest } from "./client";
 /* ---------------- LOGIN ---------------- */
 
 export async function loginUser(email, password) {
-  const data = await apiRequest("/accounts/login/", {
+  const data = await apiRequest("/login/", {
     method: "POST",
     body: JSON.stringify({ email, password }),
   });
@@ -17,7 +17,7 @@ export async function loginUser(email, password) {
 /* ---------------- REGISTER ---------------- */
 
 export async function registerUser({ first_name, last_name, email, password }) {
-  const data = await apiRequest("/accounts/register/", {
+  const data = await apiRequest("/register/", {
     method: "POST",
     body: JSON.stringify({ first_name, last_name, email, password, confirm_password: password }),
   });
@@ -31,13 +31,13 @@ export async function registerUser({ first_name, last_name, email, password }) {
 /* ---------------- PROFILE ---------------- */
 
 export async function getUserProfile() {
-  return await apiRequest("/accounts/profile/");
+  return await apiRequest("/profile/");
 }
 
 /* ---------------- CHANGE PASSWORD ---------------- */
 
 export async function changePassword(oldPassword, newPassword, confirmPassword) {
-  return await apiRequest("/accounts/password-change/", {
+  return await apiRequest("/password-change/", {
     method: "POST",
     body: JSON.stringify({ old_password: oldPassword, new_password: newPassword, confirm_password: confirmPassword }),
   });

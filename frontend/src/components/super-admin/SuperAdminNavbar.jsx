@@ -1,6 +1,7 @@
 // src/components/super-admin/SuperAdminNavbar.jsx
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import SuperAdminBell from "./SuperAdminBell";
 
 export default function SuperAdminNavbar() {
   const navigate = useNavigate();
@@ -14,12 +15,15 @@ export default function SuperAdminNavbar() {
   return (
     <nav className="bg-primary text-white px-6 py-4 flex justify-between items-center shadow-md">
       <div className="font-bold text-xl">Super Admin Dashboard</div>
-      <button
-        onClick={handleLogout}
-        className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded"
-      >
-        Logout
-      </button>
+      <div className="flex items-center gap-6">
+        <SuperAdminBell />
+        <button
+          onClick={handleLogout}
+          className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded"
+        >
+          Logout
+        </button>
+      </div>
     </nav>
   );
 }

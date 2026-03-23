@@ -13,7 +13,7 @@ export default function ShipmentsPanel() {
     async function fetchShipments() {
       try {
         const token = localStorage.getItem("access");
-        const res = await fetch(`${API_URL}/shipments/`, {
+        const res = await fetch(`${API_URL}/shipments/admin/recent-shipments/`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 

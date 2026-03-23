@@ -1,5 +1,5 @@
 // src/components/staff/StaffDashboard.jsx
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   FaBox,
@@ -11,6 +11,34 @@ import {
 
 export default function StaffDashboard() {
   const navigate = useNavigate();
+
+  const [pickupRequests, setPickupRequests] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const API_URL = import.meta.env.VITE_API_URL;
+
+  useEffect(() => {
+    const token = localStorage.getItem("access");
+    if (!token) return navigate("/login");
+
+    async function fetchPickups() {
+      try {
+        const res = await fetch(`${API_URL}/shipments/admin/pickup-requests/`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (res.ok) {
+          setPickupRequests(await res.json());
+        }
+      } catch (err) {
+        console.error("Failed to load pickup requests", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchPickups();
+  }, [navigate, API_URL]);
 
   const logout = () => {
     localStorage.removeItem("access");

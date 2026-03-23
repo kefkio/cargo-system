@@ -71,8 +71,12 @@ export default function Home() {
 
         if (profile.role === "CLIENT") {
           navigate("/dashboard/client");
-        } else if (profile.role === "ADMIN" || profile.role === "STAFF" || profile.role === "SUPERADMIN") {
+        } else if (profile.role === "SUPERADMIN") {
+          navigate("/dashboard/super-admin");
+        } else if (profile.role === "CARGOADMIN") {
           navigate("/dashboard/admin");
+        } else if (profile.role === "CLIENTADMIN") {
+          navigate("/dashboard/staff");
         } else {
           setIsLoading(false);
         }
