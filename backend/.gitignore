@@ -1,0 +1,53 @@
+# =====================
+# Python / Django
+# =====================
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.sqlite3
+*.db
+*.log
+
+# =====================
+# Virtual Environment
+# =====================
+.venv/
+env/
+venv/
+ENV/
+
+# =====================
+# Django Files
+# =====================
+*.pot
+*.pyc
+*.mo
+*.pyc
+*.coverage
+db.sqlite3
+media/
+staticfiles/
+
+# =====================
+# Environment / Secrets
+# =====================
+.env
+.env.local
+.env.*.local
+
+# =====================
+# IDE / Editor
+# =====================
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# =====================
+# OS / Temp
+# =====================
+.DS_Store
+Thumbs.db
+*.swp
+*.swo

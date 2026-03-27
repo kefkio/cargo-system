@@ -11,9 +11,18 @@ yarn-debug.log*
 yarn-error.log*
 
 # =====================
-# Backend folder (separate repo)
+# Python / Django
 # =====================
-backend/
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.sqlite3
+*.db
+backend/.venv/
+backend/env/
+backend/media/
+backend/staticfiles/
 
 # =====================
 # OS / Editor files

@@ -1,0 +1,44 @@
+[
+  {
+    "model": "shipments.shipment",
+    "pk": 1,
+    "fields": {
+      "tracking_number": "NY10022026",
+      "origin": "New York",
+      "destination": "Nairobi",
+      "airline": "BA",
+      "status": "Shipment on Schedule",
+      "shipped_date": "2026-02-19",
+      "landed_date": null,
+      "duration": ""
+    }
+  },
+  {
+    "model": "shipments.shipment",
+    "pk": 2,
+    "fields": {
+      "tracking_number": "NY12022026",
+      "origin": "New York",
+      "destination": "Nairobi",
+      "airline": "BA",
+      "status": "Landed",
+      "shipped_date": "2026-02-12",
+      "landed_date": "2026-02-20",
+      "duration": "8 days"
+    }
+  },
+  {
+    "model": "shipments.shipment",
+    "pk": 3,
+    "fields": {
+      "tracking_number": "NY05022026",
+      "origin": "New York",
+      "destination": "Nairobi",
+      "airline": "BA",
+      "status": "Landed",
+      "shipped_date": "2026-02-05",
+      "landed_date": "2026-02-13",
+      "duration": "8 days"
+    }
+  }
+]
