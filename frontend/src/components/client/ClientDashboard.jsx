@@ -1,9 +1,10 @@
 // src/components/client/ClientDashboard.jsx
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import ShipmentLifecycle from "../admin/charts/ShipmentLifecycle"; // reuse
+import ShipmentLifecycle from "../admin/charts/ShipmentLifecycle";
 import PickupRequestsPanel from "../admin/PickupRequestsPanel";
-import { FaBox, FaTruck, FaCheckCircle, FaTimesCircle } from "react-icons/fa";
+import InvoicesPanel from "../shared/InvoicesPanel";
+import { FaBox, FaTruck, FaCheckCircle, FaTimesCircle, FaMoneyCheckAlt } from "react-icons/fa";
 
 export default function ClientDashboard() {
   const navigate = useNavigate();
@@ -11,15 +12,16 @@ export default function ClientDashboard() {
   const [shipments, setShipments] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Fetch profile and shipments
+  const API_URL = import.meta.env.VITE_API_URL;
+  const BASE_URL = API_URL.replace(/\/accounts\/?$/, '');
+
   useEffect(() => {
-    const API_URL = import.meta.env.VITE_API_URL;
     const token = localStorage.getItem("access");
     if (!token) return navigate("/login");
 
     const fetchProfile = async () => {
       try {
-        const res = await fetch(`${API_URL}/accounts/profile/`, {
+        const res = await fetch(`${API_URL}/profile/`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = await res.json();
@@ -32,7 +34,7 @@ export default function ClientDashboard() {
 
     const fetchShipments = async () => {
       try {
-        const res = await fetch(`${API_URL}/shipments/client/`, {
+        const res = await fetch(`${BASE_URL}/shipments/client/`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = await res.json();
@@ -114,20 +116,58 @@ export default function ClientDashboard() {
         </div>
       </div>
 
+      {/* Pending Delivery (Paid) Banner */}
+      {shipments.filter((s) => s.proforma_paid && s.status !== "Delivered" && s.status !== "Cancelled").length > 0 && (
+        <div className="bg-emerald-50 border border-emerald-300 rounded-lg p-4 mb-6 flex items-center gap-3">
+          <FaMoneyCheckAlt className="text-emerald-600 text-2xl flex-shrink-0" />
+          <div>
+            <p className="font-semibold text-emerald-800">
+              {shipments.filter((s) => s.proforma_paid && s.status !== "Delivered" && s.status !== "Cancelled").length} shipment(s) paid &amp; pending delivery
+            </p>
+            <p className="text-sm text-emerald-600">Payment confirmed — your cargo is being processed for delivery.</p>
+          </div>
+        </div>
+      )}
+
       {/* Recent Shipments */}
       <section className="mb-6">
         <h2 className="text-xl font-semibold mb-2">Recent Shipments</h2>
-        {shipments.slice(0, 5).map((s) => (
-          <div key={s.id} className="bg-white p-4 rounded shadow mb-2">
-            <p>
-              <span className="font-bold">Tracking:</span> {s.tracking_number}
-            </p>
-            <p>
-              <span className="font-bold">Status:</span> {s.status}
-            </p>
-            <ShipmentLifecycle status={s.status} timestamps={s.timestamps} />
-          </div>
-        ))}
+        {shipments.slice(0, 5).map((s) => {
+          const ts = {
+            "Pickup Requested": s.pickup_requested_at,
+            "Shipment Created": s.shipment_created_at,
+            "Processing at Origin": s.processing_at_origin_at,
+            "In Transit": s.in_transit_at,
+            "Arrived Nairobi Hub": s.arrived_nairobi_at,
+            "Dispatched": s.dispatched_at,
+            "Delivered": s.delivered_at,
+          };
+          return (
+            <div key={s.id} className="bg-white p-4 rounded shadow mb-2">
+              {s.proforma_paid && s.status !== "Delivered" && s.status !== "Cancelled" && (
+                <div className="bg-emerald-50 border border-emerald-200 rounded px-3 py-2 mb-3 flex items-center gap-2 text-sm">
+                  <FaMoneyCheckAlt className="text-emerald-600" />
+                  <span className="text-emerald-800 font-medium">Payment complete — pending delivery</span>
+                </div>
+              )}
+              <p>
+                <span className="font-bold">Tracking:</span> {s.tracking_number}
+              </p>
+              <p>
+                <span className="font-bold">Status:</span> {s.status}
+              </p>
+              <ShipmentLifecycle status={s.status} timestamps={ts} />
+            </div>
+          );
+        })}
+      </section>
+
+      {/* My Invoices */}
+      <section className="mb-6">
+        <h2 className="text-xl font-semibold mb-2">My Invoices</h2>
+        <div className="bg-white p-4 rounded shadow">
+          <InvoicesPanel role="CLIENT" />
+        </div>
       </section>
 
       {/* Pickup Requests */}

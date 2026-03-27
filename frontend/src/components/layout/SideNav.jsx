@@ -10,6 +10,7 @@ import {
   FaPhone,
   FaInfoCircle,
   FaCalculator, // new icon for calculator link
+  FaSearch,
 } from "react-icons/fa";
 import { Link } from "react-router-dom";
 
@@ -94,6 +95,14 @@ export default function SideNav({ isOpen, setIsOpen }) {
             >
               <FaCalculator /> Shipping -Pricing Calculator
             </a>
+
+            <Link
+              to="/track"
+              onClick={() => setIsOpen(false)}
+              className="flex items-center gap-3 p-3 rounded-lg hover:bg-white/10 transition"
+            >
+              <FaSearch /> Track Parcel
+            </Link>
 
             <a
               href="#contact"

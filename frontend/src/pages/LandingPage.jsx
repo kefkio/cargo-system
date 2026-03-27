@@ -216,8 +216,7 @@ const SectionHeading = ({ eyebrow, title, subtitle, light = false }) => (
     <h2
       className={`text-3xl sm:text-4xl font-bold leading-tight mb-3 ${
         light ? "text-white" : "text-gray-900"
-      }`}
-      style={{ fontFamily: "'Playfair Display', serif" }}
+      } font-playfair`}
     >
       {title}
     </h2>
@@ -237,11 +236,7 @@ const WhatsAppFloat = () => (
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Chat with us on WhatsApp"
-      className="group relative flex items-center justify-center w-14 h-14 rounded-2xl shadow-2xl transition-all duration-300 hover:scale-110 hover:rounded-3xl"
-      style={{
-        background: "linear-gradient(135deg, #25d366, #128c7e)",
-        boxShadow: "0 8px 25px rgba(37,211,102,0.4)",
-      }}
+      className="group relative flex items-center justify-center w-14 h-14 rounded-2xl shadow-2xl transition-all duration-300 hover:scale-110 hover:rounded-3xl btn-whatsapp-float"
     >
       <FaWhatsapp size={26} className="text-white" />
       {/* Tooltip */}
@@ -256,14 +251,10 @@ const WhatsAppFloat = () => (
 
 // ─── Scroll progress bar ──────────────────────────────────────────────────────
 const ScrollProgress = ({ progress }) => (
-  <div className="fixed top-0 left-0 w-full h-0.5 z-[60]" style={{ background: "rgba(0,0,0,0.08)" }}>
+  <div className="fixed top-0 left-0 w-full h-0.5 z-[60] scroll-bar-track">
     <div
-      className="h-full transition-all duration-150"
-      style={{
-        width: `${progress}%`,
-        background: "linear-gradient(90deg, #d97706, #f59e0b, #fcd34d)",
-        boxShadow: "0 0 8px rgba(245,158,11,0.6)",
-      }}
+      className="h-full transition-all duration-150 scroll-bar-fill"
+      style={{ width: `${progress}%` }}
     />
   </div>
 );
@@ -271,8 +262,7 @@ const ScrollProgress = ({ progress }) => (
 // ─── Trust stats bar ──────────────────────────────────────────────────────────
 const TrustStats = () => (
   <div
-    className="rounded-2xl overflow-hidden"
-    style={{ background: "linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%)" }}
+    className="rounded-2xl overflow-hidden trust-stats-bg"
     role="list"
     aria-label="Shipping service statistics"
   >
@@ -285,8 +275,7 @@ const TrustStats = () => (
         >
           <div className="flex items-end gap-1 mb-1">
             <span
-              className="text-3xl font-extrabold text-amber-400 leading-none"
-              style={{ fontFamily: "'Playfair Display', serif" }}
+              className="text-3xl font-extrabold text-amber-400 leading-none font-playfair"
             >
               {value}
             </span>
@@ -310,10 +299,8 @@ const StoreTicker = () => (
     </p>
     <div className="relative">
       {/* Fade edges */}
-      <div className="absolute left-0 top-0 bottom-0 w-20 z-10 pointer-events-none"
-        style={{ background: "linear-gradient(to right, white, transparent)" }} aria-hidden="true" />
-      <div className="absolute right-0 top-0 bottom-0 w-20 z-10 pointer-events-none"
-        style={{ background: "linear-gradient(to left, white, transparent)" }} aria-hidden="true" />
+      <div className="absolute left-0 top-0 bottom-0 w-20 z-10 pointer-events-none ticker-fade-left" aria-hidden="true" />
+      <div className="absolute right-0 top-0 bottom-0 w-20 z-10 pointer-events-none ticker-fade-right" aria-hidden="true" />
 
       <div className="store-ticker-track flex gap-12 whitespace-nowrap">
         {[...SHOPPING_LOGOS, ...SHOPPING_LOGOS].map((logo, i) => {
@@ -338,28 +325,7 @@ const StoreTicker = () => (
         })}
       </div>
 
-      <style>{`
-        @keyframes marquee {
-          from { transform: translateX(0); }
-          to { transform: translateX(-50%); }
-        }
 
-        .store-ticker-track {
-          animation: marquee 18s linear infinite;
-          will-change: transform;
-        }
-        .store-ticker-track:hover {
-          animation-play-state: paused;
-        }
-        .store-ticker-track a:hover {
-          transform: scale(1.06);
-        }
-        .store-ticker-track a:hover img {
-          filter: none;
-          opacity: 1;
-          transform: scale(1.08);
-        }
-      `}</style>
     </div>
   </div>
 );
@@ -450,8 +416,7 @@ export default function LandingPage() {
 
       {/* ── Page Shell ───────────────────────────────────────────────────── */}
       <div
-        className="min-h-screen w-full overflow-x-hidden flex flex-col text-gray-800"
-        style={{ fontFamily: "'Outfit', sans-serif", background: "#fafaf9" }}
+        className="min-h-screen w-full overflow-x-hidden flex flex-col text-gray-800 landing-shell"
       >
         {/* Scroll progress */}
         <ScrollProgress progress={scrollProgress} />
@@ -499,23 +464,16 @@ export default function LandingPage() {
             {/* ── Calculator ───────────────────────────────────────────── */}
             <FadeInSection id="calculator" delay={100}>
               <div
-                className="relative rounded-3xl overflow-hidden my-8 py-16 px-4 sm:px-10"
-                style={{ background: "linear-gradient(135deg, #0f172a 0%, #1e2d50 60%, #0c1a2e 100%)" }}
+                className="relative rounded-3xl overflow-hidden my-8 py-16 px-4 sm:px-10 calculator-section-bg"
                 aria-labelledby="calc-heading"
               >
                 {/* Decorative blobs */}
                 <div
-                  className="absolute top-0 right-0 w-96 h-96 pointer-events-none"
-                  style={{
-                    background: "radial-gradient(circle at top right, rgba(245,158,11,0.12), transparent 60%)",
-                  }}
+                  className="absolute top-0 right-0 w-96 h-96 pointer-events-none calc-blob-amber"
                   aria-hidden="true"
                 />
                 <div
-                  className="absolute bottom-0 left-0 w-64 h-64 pointer-events-none"
-                  style={{
-                    background: "radial-gradient(circle at bottom left, rgba(14,165,233,0.1), transparent 60%)",
-                  }}
+                  className="absolute bottom-0 left-0 w-64 h-64 pointer-events-none calc-blob-sky"
                   aria-hidden="true"
                 />
 
@@ -571,8 +529,7 @@ export default function LandingPage() {
             {/* ── Testimonials ─────────────────────────────────────────── */}
             <FadeInSection id="testimonials" delay={100}>
               <div
-                className="rounded-3xl my-8 py-16 px-4 sm:px-10"
-                style={{ background: "linear-gradient(135deg, #fefce8, #fffbeb, #fef3c7)" }}
+                className="rounded-3xl my-8 py-16 px-4 sm:px-10 testimonials-bg"
               >
                 <SectionHeading
                   eyebrow="Customer Stories"
@@ -636,8 +593,7 @@ export default function LandingPage() {
             {/* ── Footer ───────────────────────────────────────────────── */}
             <section
               id="footer"
-              className="rounded-t-3xl overflow-hidden mt-4"
-              style={{ background: "linear-gradient(135deg, #0f172a, #1e2d50)" }}
+              className="rounded-t-3xl overflow-hidden mt-4 footer-bg"
             >
               <Footer />
             </section>

@@ -109,24 +109,13 @@ export default function ShippingCalculator() {
   const labelCls = "block text-xs font-semibold text-slate-400 mb-1.5 tracking-wide uppercase";
 
   return (
-    <div style={{ fontFamily: "'DM Sans', sans-serif" }}>
-      <style>{`
-        @keyframes sc-fadein { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
-        @keyframes sc-shake  { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-6px)} 40%{transform:translateX(6px)} 60%{transform:translateX(-4px)} 80%{transform:translateX(4px)} }
-        @keyframes sc-pulse  { 0%,100%{box-shadow:0 0 0 0 rgba(251,191,36,0.4)} 50%{box-shadow:0 0 0 12px rgba(251,191,36,0)} }
-        .sc-reveal { animation: sc-fadein 0.5s cubic-bezier(0.34,1.4,0.64,1) both; }
-        .sc-shake  { animation: sc-shake 0.45s ease; }
-        .sc-pulse  { animation: sc-pulse 1.8s ease infinite; }
-      `}</style>
-
+    <div className="font-dm-sans">
       <div
-        className={`relative w-full max-w-lg mx-auto rounded-3xl overflow-hidden shadow-2xl ${shake ? "sc-shake" : ""}`}
-        style={{ background: "linear-gradient(160deg, #0f172a 0%, #1a2744 60%, #0f2137 100%)" }}
+        className={`relative w-full max-w-lg mx-auto rounded-3xl overflow-hidden shadow-2xl calc-container-bg ${shake ? "sc-shake" : ""}`}
       >
         {/* Decorative top glow */}
         <div
-          className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-32 pointer-events-none"
-          style={{ background: "radial-gradient(ellipse at top, rgba(251,191,36,0.15) 0%, transparent 70%)" }}
+          className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-32 pointer-events-none calc-top-glow"
           aria-hidden="true"
         />
 
@@ -137,8 +126,7 @@ export default function ShippingCalculator() {
             <span className="text-amber-400 text-xs font-semibold tracking-widest uppercase">Instant Estimate</span>
           </div>
           <h2
-            style={{ fontFamily: "'Syne', sans-serif" }}
-            className="text-2xl font-extrabold text-white leading-tight"
+            className="text-2xl font-extrabold text-white leading-tight font-syne"
           >
             Shipping Cost Calculator
           </h2>
@@ -151,12 +139,8 @@ export default function ShippingCalculator() {
         <div className="px-6 mb-5">
           <div className="relative flex bg-slate-800/70 rounded-2xl p-1 border border-slate-700/60">
             <div
-              className="absolute top-1 bottom-1 w-1/2 rounded-xl transition-all duration-300 ease-out"
-              style={{
-                left: mode === "air" ? "4px" : "calc(50% - 4px)",
-                background: "linear-gradient(135deg, #f59e0b, #d97706)",
-                boxShadow: "0 2px 10px rgba(245,158,11,0.35)",
-              }}
+              className="absolute top-1 bottom-1 w-1/2 rounded-xl transition-all duration-300 ease-out calc-mode-indicator"
+              style={{ left: mode === "air" ? "4px" : "calc(50% - 4px)" }}
               aria-hidden="true"
             />
             {[
@@ -247,11 +231,7 @@ export default function ShippingCalculator() {
 
           <button
             type="submit"
-            className="w-full py-3.5 rounded-2xl font-bold text-slate-900 text-sm tracking-wide transition-all duration-200 active:scale-95"
-            style={{
-              background: "linear-gradient(135deg, #f59e0b 0%, #d97706 100%)",
-              boxShadow: "0 4px 20px rgba(245,158,11,0.4)",
-            }}
+            className="w-full py-3.5 rounded-2xl font-bold text-slate-900 text-sm tracking-wide transition-all duration-200 active:scale-95 btn-cta-amber"
             aria-label="Calculate shipping cost"
           >
             Calculate Shipping Cost →
@@ -260,8 +240,7 @@ export default function ShippingCalculator() {
           {/* Result panel */}
           {cost !== null && revealed && (
             <div
-              className="sc-reveal rounded-2xl overflow-hidden border border-amber-400/20"
-              style={{ background: "linear-gradient(135deg, rgba(245,158,11,0.08), rgba(245,158,11,0.03))" }}
+              className="sc-reveal rounded-2xl overflow-hidden border border-amber-400/20 calc-result-bg"
               role="status"
               aria-live="polite"
               aria-label={`Estimated shipping cost $${cost}`}
@@ -272,8 +251,7 @@ export default function ShippingCalculator() {
                 </p>
                 <div className="flex items-end gap-1">
                   <span
-                    style={{ fontFamily: "'Syne', sans-serif", fontSize: "2.6rem", lineHeight: 1 }}
-                    className="font-extrabold text-amber-400"
+                    className="font-extrabold text-amber-400 calc-result-value"
                   >
                     $<AnimatedNumber value={cost} />
                   </span>
@@ -293,8 +271,7 @@ export default function ShippingCalculator() {
 
               {/* CTA strip */}
               <div
-                className="px-5 py-3 border-t border-amber-400/10 flex items-center justify-between gap-3"
-                style={{ background: "rgba(245,158,11,0.05)" }}
+                className="px-5 py-3 border-t border-amber-400/10 flex items-center justify-between gap-3 calc-cta-strip-bg"
               >
                 <p className="text-xs text-slate-400 leading-tight">
                   Ready to ship? Get a confirmed quote.

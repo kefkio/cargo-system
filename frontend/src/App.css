@@ -1,75 +1,273 @@
-/* App.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-body {
-  margin: 0;
-  font-family: Arial, Helvetica, sans-serif;
-  background-color: #f4f6f9;
+/* ═══  Global  ═══ */
+body { margin:0; font-family:Arial,Helvetica,sans-serif; background-color:#f4f6f9; }
+html,body { overflow-x:hidden; }
+
+.input {
+  @apply px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary;
 }
 
-.form-container {
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+/* ═══  Marquee / Carousel  ═══ */
+@keyframes scroll { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+.animate-scroll { display:flex; animation:scroll 25s linear infinite; white-space:nowrap; flex-shrink:0; }
+.animate-scroll:hover { animation-play-state:paused; }
+.marquee-wrapper { width:100%; overflow:hidden; position:relative; }
+
+/* ═══  Form Styles  ═══ */
+.form-container { min-height:100vh; display:flex; justify-content:center; align-items:center; }
+.form-card { background:white; padding:40px; width:100%; max-width:500px; border-radius:12px; box-shadow:0 10px 25px rgba(0,0,0,0.08); }
+.form-card h2 { text-align:center; margin-bottom:25px; color:#2c3e50; }
+.form-card input { width:100%; padding:12px; margin-bottom:15px; border-radius:6px; border:1px solid #dcdcdc; font-size:14px; transition:border 0.2s ease; }
+.form-card input:focus { outline:none; border:1px solid #007bff; }
+.form-card button { width:100%; padding:12px; background-color:#007bff; color:white; border:none; border-radius:6px; font-size:15px; font-weight:bold; cursor:pointer; transition:background 0.2s ease; }
+.form-card button:hover { background-color:#0056b3; }
+.form-message { text-align:center; margin-top:15px; font-size:14px; color:green; }
+.section-title { margin:20px 0 10px; font-size:14px; font-weight:bold; color:#555; }
+
+/* ═══  Font Families  ═══ */
+.font-playfair { font-family:'Playfair Display',serif; }
+.font-outfit   { font-family:'Outfit',sans-serif; }
+.font-syne     { font-family:'Syne',sans-serif; }
+.font-dm-sans  { font-family:'DM Sans',sans-serif; }
+
+/* ═══  Loading Fallback  ═══ */
+.loading-fallback { display:flex; justify-content:center; align-items:center; height:100vh; }
+
+/* ═══  Glass Card  ═══ */
+.glass-card {
+  background:linear-gradient(135deg,rgba(255,255,255,0.07),rgba(255,255,255,0.02));
+  border:1px solid rgba(255,255,255,0.12);
+  backdrop-filter:blur(12px);
+  box-shadow:0 25px 50px rgba(0,0,0,0.4);
+}
+.glass-card-opaque35 {
+  background:linear-gradient(135deg,rgba(255,255,255,0.07),rgba(255,255,255,0.02));
+  border:1px solid rgba(255,255,255,0.12);
+  backdrop-filter:blur(12px);
+  box-shadow:0 25px 50px rgba(0,0,0,0.35);
+}
+.glass-card-light {
+  background:linear-gradient(135deg,rgba(255,255,255,0.06),rgba(255,255,255,0.02));
+  border:1px solid rgba(255,255,255,0.12);
+  backdrop-filter:blur(12px);
+  box-shadow:0 25px 50px rgba(0,0,0,0.3);
 }
 
-.form-card {
-  background: white;
-  padding: 40px;
-  width: 100%;
-  max-width: 500px;
-  border-radius: 12px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+/* ═══  CTA Buttons  ═══ */
+.btn-cta-amber     { background:linear-gradient(135deg,#f59e0b,#d97706); box-shadow:0 4px 20px rgba(245,158,11,0.4); }
+.btn-cta-amber-45  { background:linear-gradient(135deg,#f59e0b,#d97706); box-shadow:0 4px 20px rgba(245,158,11,0.45); }
+.btn-cta-orange    { background:linear-gradient(135deg,#ea580c,#c2410c); box-shadow:0 4px 20px rgba(234,88,12,0.5); }
+.btn-cta-indigo    { background:linear-gradient(135deg,#4f46e5,#0ea5e9); box-shadow:0 4px 14px rgba(79,70,229,0.3); }
+.btn-whatsapp      { background:linear-gradient(135deg,#25d366,#128c7e); box-shadow:0 4px 12px rgba(37,211,102,0.3); }
+.btn-whatsapp-float{ background:linear-gradient(135deg,#25d366,#128c7e); box-shadow:0 8px 25px rgba(37,211,102,0.4); }
+
+/* ═══  Shipping Calculator  ═══ */
+.calc-container-bg  { background:linear-gradient(160deg,#0f172a 0%,#1a2744 60%,#0f2137 100%); }
+.calc-top-glow      { background:radial-gradient(ellipse at top,rgba(251,191,36,0.15) 0%,transparent 70%); }
+.calc-mode-indicator{ background:linear-gradient(135deg,#f59e0b,#d97706); box-shadow:0 2px 10px rgba(245,158,11,0.35); }
+.calc-result-bg     { background:linear-gradient(135deg,rgba(245,158,11,0.08),rgba(245,158,11,0.03)); }
+.calc-result-value  { font-family:'Syne',sans-serif; font-size:2.6rem; line-height:1; }
+.calc-cta-strip-bg  { background:rgba(245,158,11,0.05); }
+
+@keyframes sc-fadein { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+@keyframes sc-shake  { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-6px)} 40%{transform:translateX(6px)} 60%{transform:translateX(-4px)} 80%{transform:translateX(4px)} }
+@keyframes sc-pulse  { 0%,100%{box-shadow:0 0 0 0 rgba(251,191,36,0.4)} 50%{box-shadow:0 0 0 12px rgba(251,191,36,0)} }
+.sc-reveal { animation:sc-fadein 0.5s cubic-bezier(0.34,1.4,0.64,1) both; }
+.sc-shake  { animation:sc-shake 0.45s ease; }
+.sc-pulse  { animation:sc-pulse 1.8s ease infinite; }
+
+/* ═══  Store Ticker  ═══ */
+@keyframes marquee { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+.store-ticker-track { animation:marquee 18s linear infinite; will-change:transform; }
+.store-ticker-track:hover { animation-play-state:paused; }
+.store-ticker-track a:hover { transform:scale(1.06); }
+.store-ticker-track a:hover img { filter:none; opacity:1; transform:scale(1.08); }
+
+/* ═══  SuperAdmin Navbar  ═══ */
+.super-admin-nav-bg { background:#181c27; top:0; }
+
+/* ═══  CreateShipment Grid  ═══ */
+.create-shipment-grid {
+  background-image:linear-gradient(#e8ff47 1px,transparent 1px),linear-gradient(90deg,#e8ff47 1px,transparent 1px);
+  background-size:48px 48px;
+}
+.create-shipment-grid-light {
+  background-image:linear-gradient(#cbd5e1 1px,transparent 1px),linear-gradient(90deg,#cbd5e1 1px,transparent 1px);
+  background-size:48px 48px;
 }
 
-.form-card h2 {
-  text-align: center;
-  margin-bottom: 25px;
-  color: #2c3e50;
+/* ═══  Landing Page  ═══ */
+.landing-shell       { font-family:'Outfit',sans-serif; background:#fafaf9; }
+.scroll-bar-track    { background:rgba(0,0,0,0.08); }
+.scroll-bar-fill     { background:linear-gradient(90deg,#d97706,#f59e0b,#fcd34d); box-shadow:0 0 8px rgba(245,158,11,0.6); }
+.trust-stats-bg      { background:linear-gradient(135deg,#0f172a 0%,#1e3a5f 100%); }
+.calculator-section-bg { background:linear-gradient(135deg,#0f172a 0%,#1e2d50 60%,#0c1a2e 100%); }
+.calc-blob-amber     { background:radial-gradient(circle at top right,rgba(245,158,11,0.12),transparent 60%); }
+.calc-blob-sky       { background:radial-gradient(circle at bottom left,rgba(14,165,233,0.1),transparent 60%); }
+.ticker-fade-left    { background:linear-gradient(to right,white,transparent); }
+.ticker-fade-right   { background:linear-gradient(to left,white,transparent); }
+.testimonials-bg     { background:linear-gradient(135deg,#fefce8,#fffbeb,#fef3c7); }
+.footer-bg           { background:linear-gradient(135deg,#0f172a,#1e2d50); }
+
+/* ═══  Pickup Request Modal  ═══ */
+.pickup-header-gradient { background:linear-gradient(135deg,#4f46e5 0%,#7c3aed 50%,#0ea5e9 100%); }
+
+/* ═══  Generate Address Modal  ═══ */
+.address-modal-header  { background:linear-gradient(135deg,#0f172a 0%,#1e3a5f 55%,#0ea5e9 100%); }
+.address-bar-gradient  { background:linear-gradient(90deg,#1e3a5f,#0ea5e9); }
+
+/* ═══  SEO — Amazon  ═══ */
+.seo-amazon-page          { font-family:'Outfit',sans-serif; background:#fff8f0; }
+.seo-amazon-hero-bg       { background:linear-gradient(135deg,#1a0800 0%,#7c2d12 45%,#9a3412 100%); }
+.seo-amazon-hero-glow     { background-image:radial-gradient(circle at 15% 70%,rgba(251,146,60,0.14) 0%,transparent 50%),radial-gradient(circle at 85% 10%,rgba(253,186,116,0.08) 0%,transparent 45%); }
+.seo-amazon-hero-arc      { background-image:repeating-radial-gradient(ellipse at 50% 200%,transparent 60%,rgba(255,255,255,0.4) 61%,transparent 62%); background-size:200% 200%; }
+.seo-amazon-accent        { color:#fb923c; }
+.seo-amazon-advantages-bg { background:linear-gradient(180deg,#fff7ed,#ffedd5); }
+.seo-amazon-step-line     { background:linear-gradient(90deg,transparent,#ea580c,#ea580c,transparent); }
+.seo-amazon-step-number   { background:linear-gradient(135deg,#1a0800,#7c2d12); color:#fb923c; font-family:'Playfair Display',serif; box-shadow:0 4px 16px rgba(124,45,18,0.4); }
+.seo-amazon-delivery-bg   { background:linear-gradient(135deg,#1a0800,#7c2d12); }
+.seo-amazon-estimate-btn  { background:linear-gradient(135deg,#fb923c,#ea580c); }
+.seo-amazon-calc-bg       { background:linear-gradient(135deg,#1a0800 0%,#7c2d12 50%,#9a3412 100%); }
+.seo-amazon-calc-glow     { background-image:radial-gradient(circle at 80% 15%,rgba(251,146,60,0.15),transparent 50%),radial-gradient(circle at 10% 85%,rgba(253,186,116,0.08),transparent 50%); }
+.seo-amazon-cta-bg        { background:linear-gradient(135deg,#1a0800 0%,#7c2d12 55%,#9a3412 100%); }
+.seo-amazon-cta-glow      { background:radial-gradient(circle at top right,rgba(251,146,60,0.2),transparent 60%); }
+
+/* ═══  SEO — eBay  ═══ */
+.seo-ebay-page          { font-family:'Outfit',sans-serif; background:#fffbeb; }
+.seo-ebay-hero-bg       { background:linear-gradient(135deg,#1a0a00 0%,#78350f 50%,#92400e 100%); }
+.seo-ebay-hero-glow     { background-image:radial-gradient(circle at 15% 70%,rgba(251,191,36,0.15) 0%,transparent 50%),radial-gradient(circle at 85% 15%,rgba(239,68,68,0.08) 0%,transparent 40%); }
+.seo-ebay-hero-pattern  { background-image:repeating-linear-gradient(-45deg,#fff 0,#fff 1px,transparent 0,transparent 8px); background-size:12px 12px; }
+.seo-ebay-accent        { color:#fbbf24; }
+.seo-ebay-howitworks-bg { background:linear-gradient(180deg,#fef3c7,#fde68a30); }
+.seo-ebay-step-line     { background:linear-gradient(90deg,transparent,#d97706,#d97706,transparent); }
+.seo-ebay-step-number   { background:linear-gradient(135deg,#1a0a00,#78350f); color:#fbbf24; font-family:'Playfair Display',serif; box-shadow:0 4px 16px rgba(120,53,15,0.35); }
+.seo-ebay-calc-bg       { background:linear-gradient(135deg,#1a0a00 0%,#78350f 50%,#92400e 100%); }
+.seo-ebay-calc-glow     { background-image:radial-gradient(circle at 80% 15%,rgba(251,191,36,0.15),transparent 50%),radial-gradient(circle at 10% 85%,rgba(251,191,36,0.08),transparent 50%); }
+.seo-ebay-cta-bg        { background:linear-gradient(135deg,#1a0a00 0%,#78350f 55%,#92400e 100%); }
+.seo-ebay-cta-glow      { background:radial-gradient(circle at top right,rgba(251,191,36,0.18),transparent 60%); }
+
+/* ═══  SEO — Sea Freight  ═══ */
+.seo-sea-page          { font-family:'Outfit',sans-serif; background:#f0fdfa; }
+.seo-sea-hero-bg       { background:linear-gradient(135deg,#042f2e 0%,#065f46 50%,#0f766e 100%); }
+.seo-sea-hero-glow     { background-image:radial-gradient(circle at 15% 60%,rgba(20,184,166,0.12) 0%,transparent 50%),radial-gradient(circle at 85% 20%,rgba(245,158,11,0.08) 0%,transparent 40%); }
+.seo-sea-hero-pattern  { background-image:repeating-linear-gradient(0deg,transparent,transparent 10px,rgba(255,255,255,0.3) 10px,rgba(255,255,255,0.3) 11px); background-size:100% 22px; }
+.seo-sea-accent        { color:#2dd4bf; }
+.seo-sea-howitworks-bg { background:linear-gradient(180deg,#f0fdf4,#dcfce7); }
+.seo-sea-step-line     { background:linear-gradient(90deg,transparent,#0d9488,#0d9488,transparent); }
+.seo-sea-step-number   { background:linear-gradient(135deg,#042f2e,#065f46); color:#2dd4bf; font-family:'Playfair Display',serif; box-shadow:0 4px 16px rgba(4,47,46,0.3); }
+.seo-sea-cta-bg        { background:linear-gradient(135deg,#042f2e 0%,#065f46 55%,#0f766e 100%); }
+.seo-sea-cta-glow      { background:radial-gradient(circle at top right,rgba(45,212,191,0.15),transparent 60%); }
+
+/* ═══  SEO — BestBuy  ═══ */
+.seo-bestbuy-page          { font-family:'Outfit',sans-serif; background:#f8fafc; }
+.seo-bestbuy-hero-bg       { background:linear-gradient(135deg,#1e1b4b 0%,#1d4ed8 55%,#2563eb 100%); }
+.seo-bestbuy-hero-glow     { background-image:radial-gradient(circle at 10% 60%,rgba(99,102,241,0.15) 0%,transparent 50%),radial-gradient(circle at 90% 10%,rgba(245,158,11,0.1) 0%,transparent 40%); }
+.seo-bestbuy-hero-pattern  { background-image:linear-gradient(rgba(255,255,255,0.6) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.6) 1px,transparent 1px); background-size:40px 40px; }
+.seo-bestbuy-accent        { color:#fbbf24; }
+.seo-bestbuy-howitworks-bg { background:linear-gradient(180deg,#eff6ff,#dbeafe); }
+.seo-bestbuy-step-line     { background:linear-gradient(90deg,transparent,#3b82f6,#3b82f6,transparent); }
+.seo-bestbuy-step-number   { background:linear-gradient(135deg,#1e1b4b,#1d4ed8); color:#fbbf24; font-family:'Playfair Display',serif; box-shadow:0 4px 16px rgba(29,78,216,0.3); }
+.seo-bestbuy-calc-bg       { background:linear-gradient(135deg,#1e1b4b 0%,#1d4ed8 55%,#1e40af 100%); }
+.seo-bestbuy-calc-glow     { background-image:radial-gradient(circle at 80% 20%,rgba(245,158,11,0.12),transparent 50%),radial-gradient(circle at 10% 80%,rgba(99,102,241,0.15),transparent 50%); }
+.seo-bestbuy-cta-bg        { background:linear-gradient(135deg,#1e1b4b 0%,#1d4ed8 60%,#1e40af 100%); }
+.seo-bestbuy-cta-glow      { background:radial-gradient(circle at top right,rgba(245,158,11,0.15),transparent 60%); }
+
+/* ═══  SEO — Walmart  ═══ */
+.seo-walmart-page          { font-family:'Outfit',sans-serif; background:#f0f4ff; }
+.seo-walmart-hero-bg       { background:linear-gradient(135deg,#001f5b 0%,#0047bb 55%,#005dc8 100%); }
+.seo-walmart-hero-glow     { background-image:radial-gradient(circle at 20% 65%,rgba(255,198,0,0.1) 0%,transparent 50%),radial-gradient(circle at 80% 15%,rgba(0,150,255,0.12) 0%,transparent 45%); }
+.seo-walmart-hero-pattern  { background-image:radial-gradient(circle,#fff 1px,transparent 1px); background-size:28px 28px; }
+.seo-walmart-accent        { color:#ffc600; }
+.seo-walmart-howitworks-bg { background:linear-gradient(180deg,#eff6ff,#dbeafe50); }
+.seo-walmart-step-line     { background:linear-gradient(90deg,transparent,#0047bb,#0047bb,transparent); }
+.seo-walmart-step-number   { background:linear-gradient(135deg,#001f5b,#0047bb); color:#ffc600; font-family:'Playfair Display',serif; box-shadow:0 4px 16px rgba(0,71,187,0.35); }
+.seo-walmart-calc-bg       { background:linear-gradient(135deg,#001f5b 0%,#0047bb 55%,#005dc8 100%); }
+.seo-walmart-calc-glow     { background-image:radial-gradient(circle at 75% 20%,rgba(255,198,0,0.14),transparent 50%),radial-gradient(circle at 15% 80%,rgba(0,150,255,0.12),transparent 50%); }
+.seo-walmart-cta-bg        { background:linear-gradient(135deg,#001f5b 0%,#0047bb 55%,#005dc8 100%); }
+.seo-walmart-cta-glow      { background:radial-gradient(circle at top right,rgba(255,198,0,0.18),transparent 60%); }
+.seo-walmart-cta-btn       { background:linear-gradient(135deg,#ffc600,#f59e0b); box-shadow:0 4px 20px rgba(255,198,0,0.45); }
+
+/* ═══  SEO — Air Freight  ═══ */
+.seo-air-page          { font-family:'Outfit',sans-serif; background:#f8fafc; }
+.seo-air-hero-bg       { background:linear-gradient(135deg,#0c1a2e 0%,#0f3460 55%,#1a5276 100%); }
+.seo-air-hero-glow     { background-image:radial-gradient(circle at 20% 50%,rgba(56,189,248,0.08) 0%,transparent 50%),radial-gradient(circle at 80% 20%,rgba(245,158,11,0.07) 0%,transparent 40%); }
+.seo-air-hero-pattern  { background-image:repeating-linear-gradient(45deg,#fff 0,#fff 1px,transparent 0,transparent 50%); background-size:40px 40px; }
+.seo-air-accent        { color:#f59e0b; }
+.seo-air-features-bg   { background:linear-gradient(180deg,#f0f9ff,#e0f2fe); }
+.seo-air-step-line     { background:linear-gradient(90deg,transparent,#0ea5e9,#0ea5e9,transparent); }
+.seo-air-step-number   { background:linear-gradient(135deg,#0f172a,#1e3a5f); color:#f59e0b; font-family:'Playfair Display',serif; box-shadow:0 4px 16px rgba(15,23,42,0.25); }
+.seo-air-cta-bg        { background:linear-gradient(135deg,#0f172a 0%,#1e3a5f 60%,#0c2340 100%); }
+.seo-air-cta-glow      { background:radial-gradient(circle at top right,rgba(245,158,11,0.15),transparent 60%); }
+
+/* PhoneInput in CreateShipment */
+.phone-input-container .form-control {
+  width: 100% !important;
+  background: #fff !important;
+  border: 1px solid #d1d5db !important;
+  border-radius: 0.5rem !important;
+  padding: 0.75rem 0.75rem 0.75rem 3rem !important;
+  font-size: 0.875rem !important;
+  color: #111827 !important;
+  height: auto !important;
+}
+.phone-input-container .form-control:focus {
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 0 1px rgba(59,130,246,0.2) !important;
+  outline: none !important;
+}
+.phone-input-container .flag-dropdown {
+  border: 1px solid #d1d5db !important;
+  border-radius: 0.5rem 0 0 0.5rem !important;
+  background: #f9fafb !important;
+}
+.phone-input-container .selected-flag:hover,
+.phone-input-container .selected-flag.open {
+  background: #f3f4f6 !important;
 }
 
-.form-card input {
-  width: 100%;
-  padding: 12px;
-  margin-bottom: 15px;
-  border-radius: 6px;
-  border: 1px solid #dcdcdc;
-  font-size: 14px;
-  transition: border 0.2s ease;
-}
-
-.form-card input:focus {
-  outline: none;
-  border: 1px solid #007bff;
-}
-
-.form-card button {
-  width: 100%;
-  padding: 12px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-size: 15px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background 0.2s ease;
-}
-
-.form-card button:hover {
-  background-color: #0056b3;
-}
-
-.form-message {
-  text-align: center;
-  margin-top: 15px;
-  font-size: 14px;
-  color: green;
-}
-
-.section-title {
-  margin: 20px 0 10px;
-  font-size: 14px;
-  font-weight: bold;
-  color: #555;
-}
+/* ═══  Printable Invoice (pi-*)  ═══ */
+/* Shared by PrintableInvoice.jsx preview and the embedded print-popup <style>. */
+.pi-root            { font-family:'Segoe UI',Arial,sans-serif; color:#1a1a1a; font-size:13px; }
+.pi-header          { text-align:center; margin-bottom:24px; border-bottom:2px solid #1a1a1a; padding-bottom:12px; }
+.pi-logo-row        { display:flex; align-items:center; justify-content:center; gap:12px; margin-bottom:6px; }
+.pi-logo            { width:48px; height:48px; border-radius:50%; background-color:#0B3D91; display:flex; align-items:center; justify-content:center; color:#fff; font-weight:700; font-size:18px; flex-shrink:0; }
+.pi-company-name    { font-size:22px; font-weight:700; margin:0; color:#0B3D91; }
+.pi-company-sub     { color:#555; margin-bottom:2px; }
+.pi-proforma-banner { background:#fff3e0; border:2px solid #e65100; color:#e65100; text-align:center; padding:8px; margin-bottom:16px; font-weight:700; font-size:13px; border-radius:4px; }
+.pi-meta            { display:flex; justify-content:space-between; margin-bottom:20px; font-size:13px; }
+.pi-meta-left       { line-height:1.7; }
+.pi-meta-right      { line-height:1.7; text-align:right; }
+.pi-badge           { display:inline-block; padding:1px 8px; border-radius:4px; font-size:11px; font-weight:600; }
+.pi-badge-paid      { background:#e8f5e9; color:#2e7d32; }
+.pi-badge-issued    { background:#e3f2fd; color:#1565c0; }
+.pi-badge-draft     { background:#fff3e0; color:#e65100; }
+.pi-section         { margin-top:16px; }
+.pi-section-title   { font-size:14px; font-weight:700; padding:8px 12px; }
+.pi-section-a       { background:#e8f5e9; color:#2e7d32; }
+.pi-section-b       { background:#fff3e0; color:#e65100; }
+.pi-section-c       { background:#e3f2fd; color:#1565c0; }
+.pi-section-note    { font-size:11px; color:#888; padding:4px 12px; font-style:italic; }
+.pi-table           { width:100%; border-collapse:collapse; }
+.pi-th              { padding:8px 12px; text-align:left; border-bottom:1px solid #e0e0e0; font-weight:600; background:#fafafa; font-size:12px; text-transform:uppercase; color:#666; }
+.pi-th-r            { text-align:right; }
+.pi-td              { padding:8px 12px; border-bottom:1px solid #e0e0e0; }
+.pi-td-r            { text-align:right; font-variant-numeric:tabular-nums; }
+.pi-td-muted        { color:#555; }
+.pi-td-empty        { color:#999; font-style:italic; }
+.pi-td-subtotal     { padding:8px 12px; font-weight:600; border-top:2px solid #ccc; }
+.pi-td-subtotal-r   { text-align:right; }
+.pi-td-total        { padding:8px 12px; font-weight:700; border-top:2px solid #1a1a1a; }
+.pi-td-total-r      { text-align:right; }
+.pi-td-grand        { padding:12px; font-weight:700; font-size:16px; border-top:3px double #1a1a1a; }
+.pi-td-grand-r      { text-align:right; }
+.pi-payment         { margin-top:20px; padding:10px 12px; background:#e8f5e9; border-radius:4px; font-size:12px; }
+.pi-notes           { margin-top:16px; font-size:11px; color:#888; font-style:italic; }
+.pi-disclaimer      { background:#fffde7; border:1px solid #f9a825; color:#795548; padding:10px 14px; margin-top:20px; font-size:11px; border-radius:4px; line-height:1.5; }
+.pi-qr-section      { display:flex; align-items:flex-start; justify-content:space-between; margin-top:24px; padding-top:16px; border-top:1px solid #e0e0e0; }
+.pi-qr-info         { font-size:11px; color:#666; line-height:1.6; }
+.pi-qr-info strong  { color:#333; }
+.pi-qr-hint         { margin-top:4px; font-size:10px; color:#999; }
+.pi-footer          { margin-top:40px; padding-top:12px; border-top:1px solid #ccc; font-size:11px; color:#888; text-align:center; }

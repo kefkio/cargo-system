@@ -31,7 +31,13 @@ const WarehouseManagement = lazy(() => import("./components/admin/WarehouseManag
 const CreateShipment = lazy(() => import("./components/admin/CreateShipment")); // ✅ Using admin CreateShipment
 const StaffDashboard = lazy(() => import("./components/staff/StaffDashboard"));
 const StaffPickupRequest = lazy(() => import("./components/shipment/PickupRequest"));
+const StaffInvoicing = lazy(() => import("./components/staff/StaffInvoicing"));
+const StaffReports = lazy(() => import("./components/staff/StaffReports"));
+const StaffDispatch = lazy(() => import("./components/staff/StaffDispatch"));
+const ScanUpdate = lazy(() => import("./components/shipment/ScanUpdate"));
 const SuperAdminDashboard = lazy(() => import("./components/super-admin/SuperAdminDashboard"));
+const SuperAdminReports = lazy(() => import("./components/super-admin/SuperAdminReports"));
+const TrackShipmentPage = lazy(() => import("./components/shipment/TrackShipment"));
 
 // Modal
 import ContactModal from "./components/ContactModal";
@@ -91,7 +97,7 @@ function App({ user }) {
       <Router>
         <Suspense
           fallback={
-            <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+            <div className="loading-fallback">
               Loading...
             </div>
           }
@@ -122,6 +128,9 @@ function App({ user }) {
             <Route path="/forgot-password" element={<ForgotPasswordForm />} />
             <Route path="/reset-password/:uid/:token" element={<ResetPasswordPage />} />
             <Route path="/terms-privacy" element={<TermsPrivacy />} />
+
+            {/* Public Track Page */}
+            <Route path="/track" element={<TrackShipmentPage />} />
 
             {/* Client */}
             <Route
@@ -184,6 +193,40 @@ function App({ user }) {
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/staff/invoicing"
+              element={
+                <ProtectedRoute allowedRoles={["CLIENTADMIN", "CARGOADMIN", "SUPERADMIN", "STAFF"]}>
+                  <StaffInvoicing />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/staff/dispatch"
+              element={
+                <ProtectedRoute allowedRoles={["CLIENTADMIN", "CARGOADMIN", "SUPERADMIN", "STAFF"]}>
+                  <StaffDispatch />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/staff/reports"
+              element={
+                <ProtectedRoute allowedRoles={["CLIENTADMIN", "CARGOADMIN", "SUPERADMIN", "STAFF"]}>
+                  <StaffReports />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* QR Scan Update */}
+            <Route
+              path="/scan/:trackingNumber"
+              element={
+                <ProtectedRoute allowedRoles={["SUPERADMIN", "CARGOADMIN", "ADMIN", "CLIENTADMIN", "STAFF", "CLIENT"]}>
+                  <ScanUpdate />
+                </ProtectedRoute>
+              }
+            />
 
             {/* Super Admin */}
             <Route
@@ -191,6 +234,14 @@ function App({ user }) {
               element={
                 <ProtectedRoute allowedRoles={["SUPERADMIN"]}>
                   <SuperAdminDashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/super-admin/reports"
+              element={
+                <ProtectedRoute allowedRoles={["SUPERADMIN"]}>
+                  <SuperAdminReports />
                 </ProtectedRoute>
               }
             />

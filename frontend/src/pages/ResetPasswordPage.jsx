@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 import axios from "axios";
 
 export default function ResetPasswordPage() {
@@ -8,6 +9,8 @@ export default function ResetPasswordPage() {
 
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [errors, setErrors] = useState([]);
   const [message, setMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -74,7 +77,7 @@ export default function ResetPasswordPage() {
     try {
       const apiUrl = import.meta.env.VITE_API_URL;
       const res = await axios.post(
-        `${apiUrl}/accounts/password-reset-confirm/`,
+        `${apiUrl}/password-reset-confirm/`,
         {
           uid,
           token,
@@ -113,23 +116,70 @@ export default function ResetPasswordPage() {
       {message && <p className="mb-4 text-green-600">{message}</p>}
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-        <input
-          type="password"
-          placeholder="New password"
-          value={newPassword}
-          onChange={(e) => setNewPassword(e.target.value)}
-          className="w-full p-2 border rounded"
-          required
-        />
+        {/* New Password */}
+        <div className="relative">
+          <input
+            type={showNewPassword ? "text" : "password"}
+            placeholder="New password"
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+            className="w-full p-2 pr-10 border rounded"
+            required
+          />
+          <button
+            type="button"
+            onClick={() => setShowNewPassword(!showNewPassword)}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+            tabIndex={-1}
+          >
+            {showNewPassword ? <FaEyeSlash /> : <FaEye />}
+          </button>
+        </div>
 
-        <input
-          type="password"
-          placeholder="Confirm new password"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-          className="w-full p-2 border rounded"
-          required
-        />
+        {/* Password Strength Meter */}
+        {newPassword && (() => {
+          const checks = [
+            newPassword.length >= 8,
+            /[A-Z]/.test(newPassword),
+            /[a-z]/.test(newPassword),
+            /[0-9]/.test(newPassword),
+            /[!@#$%^&*]/.test(newPassword),
+          ];
+          const passed = checks.filter(Boolean).length;
+          const label = ["", "Very Weak", "Weak", "Fair", "Strong", "Very Strong"][passed];
+          const color = ["", "bg-red-500", "bg-orange-500", "bg-yellow-500", "bg-blue-500", "bg-green-500"][passed];
+          const textColor = ["", "text-red-600", "text-orange-600", "text-yellow-600", "text-blue-600", "text-green-600"][passed];
+          return (
+            <div>
+              <div className="flex gap-1 h-1.5 rounded overflow-hidden bg-gray-200">
+                {[1, 2, 3, 4, 5].map((i) => (
+                  <div key={i} className={`flex-1 rounded transition-colors duration-300 ${i <= passed ? color : "bg-gray-200"}`} />
+                ))}
+              </div>
+              <p className={`text-xs mt-1 font-medium ${textColor}`}>{label}</p>
+            </div>
+          );
+        })()}
+
+        {/* Confirm Password */}
+        <div className="relative">
+          <input
+            type={showConfirmPassword ? "text" : "password"}
+            placeholder="Confirm new password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            className="w-full p-2 pr-10 border rounded"
+            required
+          />
+          <button
+            type="button"
+            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+            tabIndex={-1}
+          >
+            {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+          </button>
+        </div>
 
         <div className="flex flex-col mb-4">
           <button

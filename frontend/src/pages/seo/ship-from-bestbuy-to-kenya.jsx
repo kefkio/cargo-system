@@ -169,18 +169,15 @@ export default function ShipFromBestBuy() {
         <script type="application/ld+json">{JSON.stringify(FAQ_SCHEMA)}</script>
       </Helmet>
 
-      <div style={{ fontFamily: "'Outfit', sans-serif", background: "#f8fafc" }}>
+      <div className="seo-bestbuy-page">
 
         {/* ── HERO ──────────────────────────────────────────────────────────── */}
         <div
-          className="relative overflow-hidden"
-          style={{ background: "linear-gradient(135deg, #1e1b4b 0%, #1d4ed8 55%, #2563eb 100%)" }}
+          className="relative overflow-hidden seo-bestbuy-hero-bg"
         >
-          <div className="absolute inset-0 pointer-events-none" aria-hidden="true"
-            style={{ backgroundImage: "radial-gradient(circle at 10% 60%, rgba(99,102,241,0.15) 0%, transparent 50%), radial-gradient(circle at 90% 10%, rgba(245,158,11,0.1) 0%, transparent 40%)" }} />
+          <div className="absolute inset-0 pointer-events-none seo-bestbuy-hero-glow" aria-hidden="true" />
           {/* Circuit-board-style grid */}
-          <div className="absolute inset-0 pointer-events-none opacity-[0.04]" aria-hidden="true"
-            style={{ backgroundImage: "linear-gradient(rgba(255,255,255,0.6) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.6) 1px, transparent 1px)", backgroundSize: "40px 40px" }} />
+          <div className="absolute inset-0 pointer-events-none opacity-[0.04] seo-bestbuy-hero-pattern" aria-hidden="true" />
 
           {/* Back to home */}
           <div className="relative max-w-6xl mx-auto px-6 pt-6">
@@ -199,11 +196,11 @@ export default function ShipFromBestBuy() {
             <div>
               <SectionLabel text="Best Buy Forwarding" light />
               <h1
-                className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-[1.1] mb-6"
-                style={{ fontFamily: "'Playfair Display', serif" }}
+                className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-[1.1] mb-6 font-playfair"
+                
               >
                 Shop Best Buy.<br />
-                <span style={{ color: "#fbbf24" }}>Ship to Kenya.</span>
+                <span className="seo-bestbuy-accent">Ship to Kenya.</span>
               </h1>
               <p className="text-blue-100/80 text-lg leading-relaxed mb-8 max-w-lg">
                 Best Buy doesn't ship internationally — but we do.
@@ -221,7 +218,7 @@ export default function ShipFromBestBuy() {
                 ].map(({ label, value }) => (
                   <div key={label} className="bg-white/10 backdrop-blur-sm border border-white/15 rounded-2xl px-5 py-3">
                     <p className="text-xs text-blue-200/70 font-medium tracking-wide uppercase mb-0.5">{label}</p>
-                    <p className="text-xl font-bold text-amber-400" style={{ fontFamily: "'Playfair Display', serif" }}>{value}</p>
+                    <p className="text-xl font-bold text-amber-400 font-playfair" >{value}</p>
                   </div>
                 ))}
               </div>
@@ -229,8 +226,7 @@ export default function ShipFromBestBuy() {
               <div className="flex flex-wrap gap-3">
                 <a
                   href="#calculator"
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl font-bold text-slate-900 text-sm transition-all duration-200 hover:scale-105 active:scale-95"
-                  style={{ background: "linear-gradient(135deg, #f59e0b, #d97706)", boxShadow: "0 4px 20px rgba(245,158,11,0.4)" }}
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl font-bold text-slate-900 text-sm transition-all duration-200 hover:scale-105 active:scale-95 btn-cta-amber"
                 >
                   🛒 Calculate Shipping Cost
                 </a>
@@ -248,8 +244,7 @@ export default function ShipFromBestBuy() {
             {/* Visual card */}
             <div className="hidden lg:flex justify-center">
               <div
-                className="relative w-80 rounded-3xl flex flex-col items-center justify-center text-center p-8 gap-3"
-                style={{ background: "linear-gradient(135deg, rgba(255,255,255,0.07), rgba(255,255,255,0.02))", border: "1px solid rgba(255,255,255,0.12)", backdropFilter: "blur(12px)", boxShadow: "0 25px 50px rgba(0,0,0,0.3)" }}
+                className="relative w-80 rounded-3xl flex flex-col items-center justify-center text-center p-8 gap-3 glass-card-light"
               >
                 <div className="text-5xl mb-2" aria-hidden="true">🛒→📦→✈️</div>
                 <p className="text-blue-200/60 text-sm font-medium">Buy on BestBuy.com</p>
@@ -257,7 +252,7 @@ export default function ShipFromBestBuy() {
                 <p className="text-blue-200/60 text-sm font-medium">Ships to our US warehouse</p>
                 <div className="w-full h-px bg-white/10" />
                 <div>
-                  <p className="text-2xl font-extrabold text-amber-400 mb-0.5" style={{ fontFamily: "'Playfair Display', serif" }}>Delivered</p>
+                  <p className="text-2xl font-extrabold text-amber-400 mb-0.5 font-playfair" >Delivered</p>
                   <p className="text-blue-200/70 text-sm">to your door in Kenya</p>
                 </div>
                 {/* Popular items preview */}
@@ -275,7 +270,7 @@ export default function ShipFromBestBuy() {
         <div className="max-w-6xl mx-auto px-6 py-20">
           <div className="text-center mb-14">
             <SectionLabel text="What You Can Ship" />
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900" style={{ fontFamily: "'Playfair Display', serif" }}>
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 font-playfair" >
               Popular Best Buy Items We Ship to Kenya
             </h2>
             <p className="text-gray-500 mt-3 max-w-xl mx-auto">
@@ -297,11 +292,11 @@ export default function ShipFromBestBuy() {
         </div>
 
         {/* ── HOW IT WORKS ──────────────────────────────────────────────────── */}
-        <div className="py-20" style={{ background: "linear-gradient(180deg, #eff6ff, #dbeafe)" }}>
+        <div className="py-20 seo-bestbuy-howitworks-bg">
           <div className="max-w-6xl mx-auto px-6">
             <div className="text-center mb-14">
               <SectionLabel text="Step by Step" />
-              <h2 className="text-3xl sm:text-4xl font-bold text-gray-900" style={{ fontFamily: "'Playfair Display', serif" }}>
+              <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 font-playfair" >
                 How to Ship From Best Buy to Kenya
               </h2>
               <p className="text-gray-500 mt-3 max-w-xl mx-auto">
@@ -309,13 +304,11 @@ export default function ShipFromBestBuy() {
               </p>
             </div>
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 relative">
-              <div className="hidden lg:block absolute top-8 left-[12.5%] right-[12.5%] h-px"
-                style={{ background: "linear-gradient(90deg, transparent, #3b82f6, #3b82f6, transparent)" }} aria-hidden="true" />
+              <div className="hidden lg:block absolute top-8 left-[12.5%] right-[12.5%] h-px seo-bestbuy-step-line" aria-hidden="true" />
               {TIPS.map(({ step, title, body }) => (
                 <div key={step} className="text-center">
                   <div
-                    className="w-16 h-16 rounded-2xl mx-auto mb-4 flex items-center justify-center font-extrabold text-xl relative z-10"
-                    style={{ background: "linear-gradient(135deg, #1e1b4b, #1d4ed8)", color: "#fbbf24", fontFamily: "'Playfair Display', serif", boxShadow: "0 4px 16px rgba(29,78,216,0.3)" }}
+                    className="w-16 h-16 rounded-2xl mx-auto mb-4 flex items-center justify-center font-extrabold text-xl relative z-10 seo-bestbuy-step-number"
                     aria-hidden="true"
                   >{step}</div>
                   <h3 className="font-bold text-gray-900 mb-2 text-sm">{title}</h3>
@@ -330,7 +323,7 @@ export default function ShipFromBestBuy() {
         <div className="max-w-6xl mx-auto px-6 py-20">
           <div className="text-center mb-14">
             <SectionLabel text="Why FirstPoint" />
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900" style={{ fontFamily: "'Playfair Display', serif" }}>
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 font-playfair" >
               Why Ship Your Best Buy Order With Us?
             </h2>
           </div>
@@ -348,20 +341,18 @@ export default function ShipFromBestBuy() {
         {/* ── SHIPPING CALCULATOR ───────────────────────────────────────────── */}
         <div
           id="calculator"
-          className="relative py-20 overflow-hidden"
-          style={{ background: "linear-gradient(135deg, #1e1b4b 0%, #1d4ed8 55%, #1e40af 100%)" }}
+          className="relative py-20 overflow-hidden seo-bestbuy-calc-bg"
           aria-labelledby="calc-section-heading"
         >
-          <div className="absolute inset-0 pointer-events-none" aria-hidden="true"
-            style={{ backgroundImage: "radial-gradient(circle at 80% 20%, rgba(245,158,11,0.12), transparent 50%), radial-gradient(circle at 10% 80%, rgba(99,102,241,0.15), transparent 50%)" }} />
+          <div className="absolute inset-0 pointer-events-none seo-bestbuy-calc-glow" aria-hidden="true" />
 
           <div className="relative max-w-6xl mx-auto px-6">
             <div className="text-center mb-10">
               <SectionLabel text="Instant Estimate" light />
               <h2
                 id="calc-section-heading"
-                className="text-3xl sm:text-4xl font-bold text-white"
-                style={{ fontFamily: "'Playfair Display', serif" }}
+                className="text-3xl sm:text-4xl font-bold text-white font-playfair"
+                
               >
                 Estimate Your Best Buy Shipping Cost
               </h2>
@@ -399,7 +390,7 @@ export default function ShipFromBestBuy() {
           <div className="max-w-3xl mx-auto px-6">
             <div className="text-center mb-12">
               <SectionLabel text="FAQ" />
-              <h2 className="text-3xl sm:text-4xl font-bold text-gray-900" style={{ fontFamily: "'Playfair Display', serif" }}>
+              <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 font-playfair" >
                 Frequently Asked Questions
               </h2>
               <p className="text-gray-500 mt-3">Common questions about shipping Best Buy electronics to Kenya.</p>
@@ -433,14 +424,12 @@ export default function ShipFromBestBuy() {
         {/* ── CTA STRIP ─────────────────────────────────────────────────────── */}
         <div className="max-w-6xl mx-auto px-6 pb-20">
           <div
-            className="relative rounded-3xl overflow-hidden p-10 sm:p-14 flex flex-col sm:flex-row items-center gap-8"
-            style={{ background: "linear-gradient(135deg, #1e1b4b 0%, #1d4ed8 60%, #1e40af 100%)" }}
+            className="relative rounded-3xl overflow-hidden p-10 sm:p-14 flex flex-col sm:flex-row items-center gap-8 seo-bestbuy-cta-bg"
           >
-            <div className="absolute top-0 right-0 w-80 h-80 pointer-events-none" aria-hidden="true"
-              style={{ background: "radial-gradient(circle at top right, rgba(245,158,11,0.15), transparent 60%)" }} />
+            <div className="absolute top-0 right-0 w-80 h-80 pointer-events-none seo-bestbuy-cta-glow" aria-hidden="true" />
             <div className="flex-1">
               <p className="text-blue-300 text-xs font-semibold tracking-[0.2em] uppercase mb-2">Ready to Ship?</p>
-              <h2 className="text-2xl sm:text-3xl font-extrabold text-white mb-3" style={{ fontFamily: "'Playfair Display', serif" }}>
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-white mb-3 font-playfair" >
                 Start Shopping on Best Buy Today
               </h2>
               <p className="text-blue-200/60 text-sm max-w-md">
@@ -450,8 +439,7 @@ export default function ShipFromBestBuy() {
             <div className="flex flex-col gap-3 shrink-0 w-full sm:w-auto">
               <Link
                 to="/register"
-                className="px-8 py-3.5 rounded-2xl font-bold text-slate-900 text-sm text-center transition-all hover:scale-105 active:scale-95"
-                style={{ background: "linear-gradient(135deg, #f59e0b, #d97706)", boxShadow: "0 4px 20px rgba(245,158,11,0.4)" }}
+                className="px-8 py-3.5 rounded-2xl font-bold text-slate-900 text-sm text-center transition-all hover:scale-105 active:scale-95 btn-cta-amber"
               >
                 Get My US Address →
               </Link>

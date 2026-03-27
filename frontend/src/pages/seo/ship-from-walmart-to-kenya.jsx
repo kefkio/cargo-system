@@ -205,19 +205,16 @@ export default function ShipFromWalmart() {
         <script type="application/ld+json">{JSON.stringify(FAQ_SCHEMA)}</script>
       </Helmet>
 
-      <div style={{ fontFamily: "'Outfit', sans-serif", background: "#f0f4ff" }}>
+      <div className="seo-walmart-page">
 
         {/* ── HERO ──────────────────────────────────────────────────────────── */}
         <div
-          className="relative overflow-hidden"
-          style={{ background: "linear-gradient(135deg, #001f5b 0%, #0047bb 55%, #005dc8 100%)" }}
+          className="relative overflow-hidden seo-walmart-hero-bg"
         >
           {/* Walmart-blue atmosphere glows */}
-          <div className="absolute inset-0 pointer-events-none" aria-hidden="true"
-            style={{ backgroundImage: "radial-gradient(circle at 20% 65%, rgba(255,198,0,0.1) 0%, transparent 50%), radial-gradient(circle at 80% 15%, rgba(0,150,255,0.12) 0%, transparent 45%)" }} />
+          <div className="absolute inset-0 pointer-events-none seo-walmart-hero-glow" aria-hidden="true" />
           {/* Subtle dot grid */}
-          <div className="absolute inset-0 pointer-events-none opacity-[0.05]" aria-hidden="true"
-            style={{ backgroundImage: "radial-gradient(circle, #fff 1px, transparent 1px)", backgroundSize: "28px 28px" }} />
+          <div className="absolute inset-0 pointer-events-none opacity-[0.05] seo-walmart-hero-pattern" aria-hidden="true" />
 
           {/* Back to home */}
           <div className="relative max-w-6xl mx-auto px-6 pt-6">
@@ -236,11 +233,11 @@ export default function ShipFromWalmart() {
             <div>
               <SectionLabel text="Walmart Forwarding" light />
               <h1
-                className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-[1.1] mb-6"
-                style={{ fontFamily: "'Playfair Display', serif" }}
+                className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-[1.1] mb-6 font-playfair"
+                
               >
                 Shop Walmart.<br />
-                <span style={{ color: "#ffc600" }}>Ship to Kenya.</span>
+                <span className="seo-walmart-accent">Ship to Kenya.</span>
               </h1>
               <p className="text-blue-100/75 text-lg leading-relaxed mb-8 max-w-lg">
                 Walmart is America's largest retailer — from everyday groceries to
@@ -258,7 +255,7 @@ export default function ShipFromWalmart() {
                 ].map(({ label, value }) => (
                   <div key={label} className="bg-white/10 backdrop-blur-sm border border-white/15 rounded-2xl px-5 py-3">
                     <p className="text-xs text-blue-200/60 font-medium tracking-wide uppercase mb-0.5">{label}</p>
-                    <p className="text-xl font-bold text-yellow-400" style={{ fontFamily: "'Playfair Display', serif" }}>{value}</p>
+                    <p className="text-xl font-bold text-yellow-400 font-playfair" >{value}</p>
                   </div>
                 ))}
               </div>
@@ -266,8 +263,7 @@ export default function ShipFromWalmart() {
               <div className="flex flex-wrap gap-3">
                 <a
                   href="#calculator"
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl font-bold text-slate-900 text-sm transition-all duration-200 hover:scale-105 active:scale-95"
-                  style={{ background: "linear-gradient(135deg, #ffc600, #f59e0b)", boxShadow: "0 4px 20px rgba(255,198,0,0.45)" }}
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl font-bold text-slate-900 text-sm transition-all duration-200 hover:scale-105 active:scale-95 seo-walmart-cta-btn"
                 >
                   🛒 Calculate Shipping Cost
                 </a>
@@ -285,8 +281,7 @@ export default function ShipFromWalmart() {
             {/* Visual card */}
             <div className="hidden lg:flex justify-center">
               <div
-                className="relative w-80 rounded-3xl flex flex-col items-center text-center p-8 gap-4"
-                style={{ background: "linear-gradient(135deg, rgba(255,255,255,0.07), rgba(255,255,255,0.02))", border: "1px solid rgba(255,255,255,0.12)", backdropFilter: "blur(12px)", boxShadow: "0 25px 50px rgba(0,0,0,0.35)" }}
+                className="relative w-80 rounded-3xl flex flex-col items-center text-center p-8 gap-4 glass-card-opaque35"
               >
                 <div className="text-5xl" aria-hidden="true">🏪</div>
                 <div>
@@ -302,7 +297,7 @@ export default function ShipFromWalmart() {
                 </div>
                 <div className="w-full h-px bg-white/10" />
                 <div>
-                  <p className="text-2xl font-extrabold text-yellow-400" style={{ fontFamily: "'Playfair Display', serif" }}>Delivered</p>
+                  <p className="text-2xl font-extrabold text-yellow-400 font-playfair" >Delivered</p>
                   <p className="text-blue-200/60 text-sm mt-0.5">Anywhere in Kenya</p>
                 </div>
               </div>
@@ -314,7 +309,7 @@ export default function ShipFromWalmart() {
         <div className="max-w-6xl mx-auto px-6 py-20">
           <div className="text-center mb-14">
             <SectionLabel text="What You Can Ship" />
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900" style={{ fontFamily: "'Playfair Display', serif" }}>
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 font-playfair" >
               Popular Walmart Categories We Ship to Kenya
             </h2>
             <p className="text-gray-500 mt-3 max-w-xl mx-auto">
@@ -336,11 +331,11 @@ export default function ShipFromWalmart() {
         </div>
 
         {/* ── ADVANTAGES ────────────────────────────────────────────────────── */}
-        <div className="py-20" style={{ background: "linear-gradient(180deg, #eff6ff, #dbeafe50)" }}>
+        <div className="py-20 seo-walmart-howitworks-bg">
           <div className="max-w-6xl mx-auto px-6">
             <div className="text-center mb-14">
               <SectionLabel text="Why Walmart + FirstPoint" />
-              <h2 className="text-3xl sm:text-4xl font-bold text-gray-900" style={{ fontFamily: "'Playfair Display', serif" }}>
+              <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 font-playfair" >
                 The Smart Way to Shop From the USA
               </h2>
               <p className="text-gray-500 mt-3 max-w-xl mx-auto">
@@ -363,7 +358,7 @@ export default function ShipFromWalmart() {
         <div className="max-w-6xl mx-auto px-6 py-20">
           <div className="text-center mb-14">
             <SectionLabel text="Step by Step" />
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900" style={{ fontFamily: "'Playfair Display', serif" }}>
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 font-playfair" >
               How to Ship From Walmart to Kenya
             </h2>
             <p className="text-gray-500 mt-3 max-w-xl mx-auto">
@@ -371,13 +366,11 @@ export default function ShipFromWalmart() {
             </p>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 relative">
-            <div className="hidden lg:block absolute top-8 left-[12.5%] right-[12.5%] h-px"
-              style={{ background: "linear-gradient(90deg, transparent, #0047bb, #0047bb, transparent)" }} aria-hidden="true" />
+            <div className="hidden lg:block absolute top-8 left-[12.5%] right-[12.5%] h-px seo-walmart-step-line" aria-hidden="true" />
             {STEPS.map(({ step, title, body }) => (
               <div key={step} className="text-center">
                 <div
-                  className="w-16 h-16 rounded-2xl mx-auto mb-4 flex items-center justify-center font-extrabold text-xl relative z-10"
-                  style={{ background: "linear-gradient(135deg, #001f5b, #0047bb)", color: "#ffc600", fontFamily: "'Playfair Display', serif", boxShadow: "0 4px 16px rgba(0,71,187,0.35)" }}
+                  className="w-16 h-16 rounded-2xl mx-auto mb-4 flex items-center justify-center font-extrabold text-xl relative z-10 seo-walmart-step-number"
                   aria-hidden="true"
                 >{step}</div>
                 <h3 className="font-bold text-gray-900 mb-2 text-sm">{title}</h3>
@@ -390,20 +383,18 @@ export default function ShipFromWalmart() {
         {/* ── SHIPPING CALCULATOR ───────────────────────────────────────────── */}
         <div
           id="calculator"
-          className="relative py-20 overflow-hidden"
-          style={{ background: "linear-gradient(135deg, #001f5b 0%, #0047bb 55%, #005dc8 100%)" }}
+          className="relative py-20 overflow-hidden seo-walmart-calc-bg"
           aria-labelledby="calc-walmart-heading"
         >
-          <div className="absolute inset-0 pointer-events-none" aria-hidden="true"
-            style={{ backgroundImage: "radial-gradient(circle at 75% 20%, rgba(255,198,0,0.14), transparent 50%), radial-gradient(circle at 15% 80%, rgba(0,150,255,0.12), transparent 50%)" }} />
+          <div className="absolute inset-0 pointer-events-none seo-walmart-calc-glow" aria-hidden="true" />
 
           <div className="relative max-w-6xl mx-auto px-6">
             <div className="text-center mb-10">
               <SectionLabel text="Instant Estimate" light />
               <h2
                 id="calc-walmart-heading"
-                className="text-3xl sm:text-4xl font-bold text-white"
-                style={{ fontFamily: "'Playfair Display', serif" }}
+                className="text-3xl sm:text-4xl font-bold text-white font-playfair"
+                
               >
                 Calculate Your Walmart Shipping Cost
               </h2>
@@ -441,7 +432,7 @@ export default function ShipFromWalmart() {
           <div className="max-w-3xl mx-auto px-6">
             <div className="text-center mb-12">
               <SectionLabel text="FAQ" />
-              <h2 className="text-3xl sm:text-4xl font-bold text-gray-900" style={{ fontFamily: "'Playfair Display', serif" }}>
+              <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 font-playfair" >
                 Frequently Asked Questions
               </h2>
               <p className="text-gray-500 mt-3">Common questions about shipping Walmart orders to Kenya.</p>
@@ -475,14 +466,12 @@ export default function ShipFromWalmart() {
         {/* ── CTA STRIP ─────────────────────────────────────────────────────── */}
         <div className="max-w-6xl mx-auto px-6 pb-20">
           <div
-            className="relative rounded-3xl overflow-hidden p-10 sm:p-14 flex flex-col sm:flex-row items-center gap-8"
-            style={{ background: "linear-gradient(135deg, #001f5b 0%, #0047bb 55%, #005dc8 100%)" }}
+            className="relative rounded-3xl overflow-hidden p-10 sm:p-14 flex flex-col sm:flex-row items-center gap-8 seo-walmart-cta-bg"
           >
-            <div className="absolute top-0 right-0 w-80 h-80 pointer-events-none" aria-hidden="true"
-              style={{ background: "radial-gradient(circle at top right, rgba(255,198,0,0.18), transparent 60%)" }} />
+            <div className="absolute top-0 right-0 w-80 h-80 pointer-events-none seo-walmart-cta-glow" aria-hidden="true" />
             <div className="flex-1">
               <p className="text-yellow-400 text-xs font-semibold tracking-[0.2em] uppercase mb-2">Ready to Shop?</p>
-              <h2 className="text-2xl sm:text-3xl font-extrabold text-white mb-3" style={{ fontFamily: "'Playfair Display', serif" }}>
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-white mb-3 font-playfair" >
                 Get Your Free US Address & Start Shopping Walmart
               </h2>
               <p className="text-blue-200/55 text-sm max-w-md">
@@ -492,8 +481,7 @@ export default function ShipFromWalmart() {
             <div className="flex flex-col gap-3 shrink-0 w-full sm:w-auto">
               <Link
                 to="/register"
-                className="px-8 py-3.5 rounded-2xl font-bold text-slate-900 text-sm text-center transition-all hover:scale-105 active:scale-95"
-                style={{ background: "linear-gradient(135deg, #ffc600, #f59e0b)", boxShadow: "0 4px 20px rgba(255,198,0,0.45)" }}
+                className="px-8 py-3.5 rounded-2xl font-bold text-slate-900 text-sm text-center transition-all hover:scale-105 active:scale-95 seo-walmart-cta-btn"
               >
                 Get My US Address →
               </Link>

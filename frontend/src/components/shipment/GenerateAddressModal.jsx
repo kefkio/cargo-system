@@ -127,8 +127,7 @@ export default function GenerateAddressModal({ isOpen, onClose, user }) {
       >
         {/* Header */}
         <div
-          className="px-6 pt-7 pb-10 relative"
-          style={{ background: "linear-gradient(135deg, #0f172a 0%, #1e3a5f 55%, #0ea5e9 100%)" }}
+          className="px-6 pt-7 pb-10 relative address-modal-header"
         >
           <button
             onClick={handleClose}
@@ -224,8 +223,7 @@ export default function GenerateAddressModal({ isOpen, onClose, user }) {
 
               <button
                 onClick={handleGenerate}
-                className="w-full py-3 rounded-xl text-sm font-bold text-white active:scale-95 transition-all duration-150"
-                style={{ background: "linear-gradient(135deg, #4f46e5, #0ea5e9)", boxShadow: "0 4px 14px rgba(79,70,229,0.3)" }}
+                className="w-full py-3 rounded-xl text-sm font-bold text-white active:scale-95 transition-all duration-150 btn-cta-indigo"
               >
                 Generate Address →
               </button>
@@ -235,8 +233,7 @@ export default function GenerateAddressModal({ isOpen, onClose, user }) {
               {/* Address card */}
               <div className="rounded-xl overflow-hidden border border-indigo-100 shadow-sm" aria-label="Generated warehouse address">
                 <div
-                  className="px-4 py-2.5 flex items-center justify-between"
-                  style={{ background: "linear-gradient(90deg, #1e3a5f, #0ea5e9)" }}
+                  className="px-4 py-2.5 flex items-center justify-between address-bar-gradient"
                 >
                   <span className="text-white text-xs font-bold tracking-wide uppercase">🇺🇸 USA Warehouse Address</span>
                   <span className="text-white/70 text-xs">{selectedWarehouse}</span>
@@ -268,8 +265,7 @@ export default function GenerateAddressModal({ isOpen, onClose, user }) {
 
                 <button
                   onClick={handleWhatsApp}
-                  className="flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold text-white active:scale-95 transition-all duration-150"
-                  style={{ background: "linear-gradient(135deg, #25d366, #128c7e)", boxShadow: "0 4px 12px rgba(37,211,102,0.3)" }}
+                  className="flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold text-white active:scale-95 transition-all duration-150 btn-whatsapp"
                   aria-label="Send address via WhatsApp"
                 >
                   <FaWhatsapp className="text-lg" /> WhatsApp

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 export default function WarehouseManagement() {
   const API_URL = import.meta.env.VITE_API_URL;
@@ -35,6 +36,12 @@ export default function WarehouseManagement() {
   return (
     <div className="min-h-screen bg-gray-100 p-6">
       <div className="max-w-6xl mx-auto bg-white shadow rounded p-6">
+        <Link
+          to="/dashboard/admin"
+          className="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800 mb-4"
+        >
+          ← Back to Dashboard
+        </Link>
         <h1 className="text-2xl font-bold mb-4">Warehouse Management</h1>
 
         {loading && <p>Loading warehouses...</p>}

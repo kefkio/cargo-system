@@ -1,8 +1,10 @@
 // src/components/marketing/Hero.jsx
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import PickupRequest from "../shipment/PickupRequest";
 
 const Hero = () => {
+  const navigate = useNavigate();
   const [trackingNumber, setTrackingNumber] = useState("");
   const [scrollY, setScrollY] = useState(0);
   const [bubbleData] = useState(() =>
@@ -42,7 +44,7 @@ const Hero = () => {
       alert("Please enter a tracking number.");
       return;
     }
-    alert(`Tracking parcel: ${trackingNumber}`);
+    navigate(`/track?tn=${encodeURIComponent(trackingNumber.trim())}`);
   };
 
   return (

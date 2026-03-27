@@ -4,7 +4,7 @@ import DashboardCard from "../components/DashboardCard";
 import NextShipmentBanner from "../components/NextShipmentBanner";
 import PickupRequest from "../components/PickupRequest";
 import ShippingCalculator from "../components/ShippingCalculator";
-import TrackShipment from "../components/TrackShipment";
+import TrackShipment from "../components/shipment/TrackShipment";
 import Contact from "../components/Contact";
 
 // ─── Fonts ────────────────────────────────────────────────────────────────────
@@ -512,7 +512,7 @@ export default function ClientDashboard() {
 
         {/* ── Next Shipment Banner ──────────────────────────────────────── */}
         <FadeSection id="next-shipment" delay={80}>
-          <div style={{ marginTop: 32 }}>
+          <div className="mt-8">
             <div className="section-title">Upcoming</div>
             <div className="banner-wrapper">
               <NextShipmentBanner />
@@ -522,7 +522,7 @@ export default function ClientDashboard() {
 
         {/* ── Track Shipment (full width) ───────────────────────────────── */}
         <FadeSection id="track-shipment" delay={140}>
-          <div style={{ marginTop: 32 }}>
+          <div className="mt-8">
             <div className="section-title">Tracking</div>
             <div className="dash-card">
               <div className="dash-card-header">
@@ -538,7 +538,7 @@ export default function ClientDashboard() {
                 <span className="badge badge-blue">Real-time</span>
               </div>
               <div className="dash-card-body">
-                <TrackShipment />
+                <TrackShipment embedded />
               </div>
             </div>
           </div>
@@ -546,7 +546,7 @@ export default function ClientDashboard() {
 
         {/* ── Main 2-col grid ───────────────────────────────────────────── */}
         <FadeSection id="tools" delay={200}>
-          <div style={{ marginTop: 32 }}>
+          <div className="mt-8">
             <div className="section-title">Tools & Actions</div>
             <div className="main-grid">
 

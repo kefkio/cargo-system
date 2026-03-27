@@ -58,6 +58,7 @@ export default function Navbar({ setIsSideNavOpen }) {
     { id: "services", label: "Services", hasDropdown: true },
     { id: "pricing", label: "Pricing" },
     { id: "calculator", label: "Calculator" },
+    { id: "track", label: "Track Parcel", path: "/track" },
   ];
 
   const servicesDropdown = [
@@ -109,6 +110,13 @@ export default function Navbar({ setIsSideNavOpen }) {
                   </ul>
                 )}
               </>
+            ) : link.path ? (
+              <Link
+                to={link.path}
+                className="pb-1 transition-all duration-300 hover:text-secondary"
+              >
+                {link.label}
+              </Link>
             ) : (
               <a
                 href={`#${link.id}`}

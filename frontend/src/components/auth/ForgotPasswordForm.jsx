@@ -1,50 +1,38 @@
-// src/pages/ResetPasswordPage.jsx
+// src/components/auth/ForgotPasswordForm.jsx
 import React, { useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 
-const BASE_URL = import.meta.env.VITE_API_URL ? `${import.meta.env.VITE_API_URL}/accounts` : "http://localhost:8000/api/accounts";
+const API_URL = import.meta.env.VITE_API_URL;
 
-export default function ResetPasswordPage() {
-  const { uid, token } = useParams();
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+export default function ForgotPasswordForm() {
+  const [email, setEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState("");
-  const navigate = useNavigate();
+  const [error, setError] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (!newPassword || !confirmPassword) return alert("All fields are required");
-    if (newPassword !== confirmPassword) return alert("Passwords do not match");
+    if (!email.trim()) return;
 
     setIsSubmitting(true);
     setMessage("");
+    setError("");
 
     try {
-      const res = await fetch(`${BASE_URL}/password-reset-confirm/`, {
+      const res = await fetch(`${API_URL}/password-reset-request/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          uid,
-          token,
-          new_password: newPassword,
-          confirm_password: confirmPassword,
-        }),
+        body: JSON.stringify({ email }),
       });
 
       const data = await res.json();
 
-      if (!res.ok) throw new Error(data.error || "Failed to reset password");
+      if (!res.ok) throw new Error(data.error || "Request failed");
 
-      setMessage(data.message || "Password reset successfully!");
-      setNewPassword("");
-      setConfirmPassword("");
-
-      // Optionally redirect after 2 seconds
-      setTimeout(() => navigate("/login"), 2000);
+      setMessage(data.message || "If that email exists, a reset link has been sent.");
+      setEmail("");
     } catch (err) {
-      alert(err.message);
+      setError(err.message);
     } finally {
       setIsSubmitting(false);
     }
@@ -53,52 +41,57 @@ export default function ResetPasswordPage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 p-4">
       <div className="w-full max-w-md bg-white p-8 rounded-lg shadow-lg">
-        <h2 className="text-2xl font-bold mb-2 text-center">Reset Password</h2>
+        <div className="mb-4">
+          <Link to="/login" className="text-blue-600 hover:underline text-sm">
+            Back to Sign in
+          </Link>
+        </div>
+
+        <h2 className="text-2xl font-bold mb-2 text-center">Forgot Password</h2>
         <p className="text-sm mb-6 text-gray-600 text-center">
-          Enter your new password below.
+          Enter your email address and we\u2019ll send you a link to reset your password.
         </p>
+
+        {message && (
+          <div className="mb-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded text-sm">
+            {message}
+          </div>
+        )}
+
+        {error && (
+          <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded text-sm">
+            {error}
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <input
-            type="password"
-            placeholder="New Password"
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
+            type="email"
+            placeholder="Your email address"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             required
+            autoComplete="email"
             disabled={isSubmitting}
             className="border p-2 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
-          <input
-            type="password"
-            placeholder="Confirm Password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            required
-            disabled={isSubmitting}
-            className="border p-2 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
+
           <button
             type="submit"
             disabled={isSubmitting}
-            className={`bg-blue-600 text-white p-2 rounded w-full transition ${
+            className={`bg-blue-600 text-white p-2 rounded hover:bg-blue-700 transition ${
               isSubmitting ? "opacity-50 cursor-not-allowed" : ""
             }`}
           >
-            {isSubmitting ? "Resetting..." : "Reset Password"}
+            {isSubmitting ? "Sending..." : "Send Reset Link"}
           </button>
         </form>
 
-        {message && <p className="text-green-600 text-sm text-center mt-2">{message}</p>}
-
-        <p className="text-sm text-center mt-4">
+        <p className="text-sm text-center text-gray-500 mt-4">
           Remember your password?{" "}
-          <button
-            type="button"
-            onClick={() => navigate("/login")}
-            className="text-blue-600 hover:underline"
-          >
+          <Link to="/login" className="text-blue-600 hover:underline">
             Sign in
-          </button>
+          </Link>
         </p>
       </div>
     </div>

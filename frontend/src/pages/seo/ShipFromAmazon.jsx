@@ -210,19 +210,16 @@ export default function ShipFromAmazon() {
         <script type="application/ld+json">{JSON.stringify(FAQ_SCHEMA)}</script>
       </Helmet>
 
-      <div style={{ fontFamily: "'Outfit', sans-serif", background: "#fff8f0" }}>
+      <div className="seo-amazon-page">
 
         {/* ── HERO ──────────────────────────────────────────────────────────── */}
         <div
-          className="relative overflow-hidden"
-          style={{ background: "linear-gradient(135deg, #1a0800 0%, #7c2d12 45%, #9a3412 100%)" }}
+          className="relative overflow-hidden seo-amazon-hero-bg"
         >
           {/* Atmospheric glows */}
-          <div className="absolute inset-0 pointer-events-none" aria-hidden="true"
-            style={{ backgroundImage: "radial-gradient(circle at 15% 70%, rgba(251,146,60,0.14) 0%, transparent 50%), radial-gradient(circle at 85% 10%, rgba(253,186,116,0.08) 0%, transparent 45%)" }} />
+          <div className="absolute inset-0 pointer-events-none seo-amazon-hero-glow" aria-hidden="true" />
           {/* Amazon smile arc suggestion - subtle curved lines */}
-          <div className="absolute bottom-0 left-0 right-0 h-40 pointer-events-none opacity-[0.04]" aria-hidden="true"
-            style={{ backgroundImage: "repeating-radial-gradient(ellipse at 50% 200%, transparent 60%, rgba(255,255,255,0.4) 61%, transparent 62%)", backgroundSize: "200% 200%" }} />
+          <div className="absolute bottom-0 left-0 right-0 h-40 pointer-events-none opacity-[0.04] seo-amazon-hero-arc" aria-hidden="true" />
 
           {/* Back to home */}
           <div className="relative max-w-6xl mx-auto px-6 pt-6">
@@ -241,11 +238,11 @@ export default function ShipFromAmazon() {
             <div>
               <SectionLabel text="Amazon Forwarding" light />
               <h1
-                className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-[1.1] mb-6"
-                style={{ fontFamily: "'Playfair Display', serif" }}
+                className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-[1.1] mb-6 font-playfair"
+                
               >
                 Shop Amazon.<br />
-                <span style={{ color: "#fb923c" }}>Ship to Kenya.</span>
+                <span className="seo-amazon-accent">Ship to Kenya.</span>
               </h1>
               <p className="text-orange-100/75 text-lg leading-relaxed mb-8 max-w-lg">
                 Amazon's 350M+ product catalog is now yours. Use our US warehouse address
@@ -262,7 +259,7 @@ export default function ShipFromAmazon() {
                 ].map(({ label, value }) => (
                   <div key={label} className="bg-white/10 backdrop-blur-sm border border-white/15 rounded-2xl px-5 py-3">
                     <p className="text-xs text-orange-200/60 font-medium tracking-wide uppercase mb-0.5">{label}</p>
-                    <p className="text-xl font-bold text-orange-300" style={{ fontFamily: "'Playfair Display', serif" }}>{value}</p>
+                    <p className="text-xl font-bold text-orange-300 font-playfair" >{value}</p>
                   </div>
                 ))}
               </div>
@@ -270,8 +267,7 @@ export default function ShipFromAmazon() {
               <div className="flex flex-wrap gap-3">
                 <a
                   href="#calculator"
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl font-bold text-white text-sm transition-all duration-200 hover:scale-105 active:scale-95"
-                  style={{ background: "linear-gradient(135deg, #ea580c, #c2410c)", boxShadow: "0 4px 20px rgba(234,88,12,0.5)" }}
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl font-bold text-white text-sm transition-all duration-200 hover:scale-105 active:scale-95 btn-cta-orange"
                 >
                   📦 Calculate Shipping Cost
                 </a>
@@ -289,8 +285,7 @@ export default function ShipFromAmazon() {
             {/* Visual card */}
             <div className="hidden lg:flex justify-center">
               <div
-                className="relative w-80 rounded-3xl flex flex-col items-center text-center p-8 gap-4"
-                style={{ background: "linear-gradient(135deg, rgba(255,255,255,0.07), rgba(255,255,255,0.02))", border: "1px solid rgba(255,255,255,0.12)", backdropFilter: "blur(12px)", boxShadow: "0 25px 50px rgba(0,0,0,0.4)" }}
+                className="relative w-80 rounded-3xl flex flex-col items-center text-center p-8 gap-4 glass-card"
               >
                 <div className="text-5xl" aria-hidden="true">📦</div>
                 <div>
@@ -318,7 +313,7 @@ export default function ShipFromAmazon() {
         <div className="max-w-6xl mx-auto px-6 py-20">
           <div className="text-center mb-14">
             <SectionLabel text="What You Can Ship" />
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900" style={{ fontFamily: "'Playfair Display', serif" }}>
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 font-playfair" >
               Popular Amazon Categories We Ship to Kenya
             </h2>
             <p className="text-gray-500 mt-3 max-w-xl mx-auto">
@@ -340,11 +335,11 @@ export default function ShipFromAmazon() {
         </div>
 
         {/* ── ADVANTAGES ────────────────────────────────────────────────────── */}
-        <div className="py-20" style={{ background: "linear-gradient(180deg, #fff7ed, #ffedd5)" }}>
+        <div className="py-20 seo-amazon-advantages-bg">
           <div className="max-w-6xl mx-auto px-6">
             <div className="text-center mb-14">
               <SectionLabel text="Why Amazon + FirstPoint" />
-              <h2 className="text-3xl sm:text-4xl font-bold text-gray-900" style={{ fontFamily: "'Playfair Display', serif" }}>
+              <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 font-playfair" >
                 The Complete Amazon-to-Kenya Experience
               </h2>
               <p className="text-gray-500 mt-3 max-w-xl mx-auto">
@@ -367,7 +362,7 @@ export default function ShipFromAmazon() {
         <div className="max-w-6xl mx-auto px-6 py-20">
           <div className="text-center mb-14">
             <SectionLabel text="Step by Step" />
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900" style={{ fontFamily: "'Playfair Display', serif" }}>
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 font-playfair" >
               How to Ship From Amazon to Kenya
             </h2>
             <p className="text-gray-500 mt-3 max-w-xl mx-auto">
@@ -375,13 +370,11 @@ export default function ShipFromAmazon() {
             </p>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 relative">
-            <div className="hidden lg:block absolute top-8 left-[12.5%] right-[12.5%] h-px"
-              style={{ background: "linear-gradient(90deg, transparent, #ea580c, #ea580c, transparent)" }} aria-hidden="true" />
+            <div className="hidden lg:block absolute top-8 left-[12.5%] right-[12.5%] h-px seo-amazon-step-line" aria-hidden="true" />
             {STEPS.map(({ step, title, body }) => (
               <div key={step} className="text-center">
                 <div
-                  className="w-16 h-16 rounded-2xl mx-auto mb-4 flex items-center justify-center font-extrabold text-xl relative z-10"
-                  style={{ background: "linear-gradient(135deg, #1a0800, #7c2d12)", color: "#fb923c", fontFamily: "'Playfair Display', serif", boxShadow: "0 4px 16px rgba(124,45,18,0.4)" }}
+                  className="w-16 h-16 rounded-2xl mx-auto mb-4 flex items-center justify-center font-extrabold text-xl relative z-10 seo-amazon-step-number"
                   aria-hidden="true"
                 >{step}</div>
                 <h3 className="font-bold text-gray-900 mb-2 text-sm">{title}</h3>
@@ -394,8 +387,7 @@ export default function ShipFromAmazon() {
         {/* ── DELIVERY TIME VISUAL ──────────────────────────────────────────── */}
         <div className="max-w-6xl mx-auto px-6 pb-20">
           <div
-            className="rounded-3xl overflow-hidden grid sm:grid-cols-2 divide-y sm:divide-y-0 sm:divide-x divide-white/10"
-            style={{ background: "linear-gradient(135deg, #1a0800, #7c2d12)" }}
+            className="rounded-3xl overflow-hidden grid sm:grid-cols-2 divide-y sm:divide-y-0 sm:divide-x divide-white/10 seo-amazon-delivery-bg"
             aria-label="Delivery time comparison"
           >
             {[
@@ -405,12 +397,11 @@ export default function ShipFromAmazon() {
               <div key={mode} className="p-8 sm:p-10 text-center flex flex-col items-center gap-3">
                 <span className="text-4xl" aria-hidden="true">{icon}</span>
                 <p className="text-orange-300/70 text-xs font-semibold uppercase tracking-widest">{mode}</p>
-                <p className="text-4xl font-extrabold text-white" style={{ fontFamily: "'Playfair Display', serif" }}>{time}</p>
+                <p className="text-4xl font-extrabold text-white font-playfair" >{time}</p>
                 <p className="text-orange-400 font-bold text-lg">{rate}</p>
                 <p className="text-orange-200/50 text-xs">{note}</p>
                 <a href="#calculator"
-                  className="mt-2 px-5 py-2 rounded-xl text-xs font-bold text-slate-900 transition-all hover:scale-105 active:scale-95"
-                  style={{ background: "linear-gradient(135deg, #fb923c, #ea580c)" }}>
+                  className="mt-2 px-5 py-2 rounded-xl text-xs font-bold text-slate-900 transition-all hover:scale-105 active:scale-95 seo-amazon-estimate-btn">
                   Get Estimate →
                 </a>
               </div>
@@ -421,20 +412,18 @@ export default function ShipFromAmazon() {
         {/* ── SHIPPING CALCULATOR ───────────────────────────────────────────── */}
         <div
           id="calculator"
-          className="relative py-20 overflow-hidden"
-          style={{ background: "linear-gradient(135deg, #1a0800 0%, #7c2d12 50%, #9a3412 100%)" }}
+          className="relative py-20 overflow-hidden seo-amazon-calc-bg"
           aria-labelledby="calc-amazon-heading"
         >
-          <div className="absolute inset-0 pointer-events-none" aria-hidden="true"
-            style={{ backgroundImage: "radial-gradient(circle at 80% 15%, rgba(251,146,60,0.15), transparent 50%), radial-gradient(circle at 10% 85%, rgba(253,186,116,0.08), transparent 50%)" }} />
+          <div className="absolute inset-0 pointer-events-none seo-amazon-calc-glow" aria-hidden="true" />
 
           <div className="relative max-w-6xl mx-auto px-6">
             <div className="text-center mb-10">
               <SectionLabel text="Instant Estimate" light />
               <h2
                 id="calc-amazon-heading"
-                className="text-3xl sm:text-4xl font-bold text-white"
-                style={{ fontFamily: "'Playfair Display', serif" }}
+                className="text-3xl sm:text-4xl font-bold text-white font-playfair"
+                
               >
                 Calculate Your Amazon Shipping Cost
               </h2>
@@ -472,7 +461,7 @@ export default function ShipFromAmazon() {
           <div className="max-w-3xl mx-auto px-6">
             <div className="text-center mb-12">
               <SectionLabel text="FAQ" />
-              <h2 className="text-3xl sm:text-4xl font-bold text-gray-900" style={{ fontFamily: "'Playfair Display', serif" }}>
+              <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 font-playfair" >
                 Frequently Asked Questions
               </h2>
               <p className="text-gray-500 mt-3">Everything you need to know about shipping Amazon orders to Kenya.</p>
@@ -506,14 +495,12 @@ export default function ShipFromAmazon() {
         {/* ── CTA STRIP ─────────────────────────────────────────────────────── */}
         <div className="max-w-6xl mx-auto px-6 pb-20">
           <div
-            className="relative rounded-3xl overflow-hidden p-10 sm:p-14 flex flex-col sm:flex-row items-center gap-8"
-            style={{ background: "linear-gradient(135deg, #1a0800 0%, #7c2d12 55%, #9a3412 100%)" }}
+            className="relative rounded-3xl overflow-hidden p-10 sm:p-14 flex flex-col sm:flex-row items-center gap-8 seo-amazon-cta-bg"
           >
-            <div className="absolute top-0 right-0 w-80 h-80 pointer-events-none" aria-hidden="true"
-              style={{ background: "radial-gradient(circle at top right, rgba(251,146,60,0.2), transparent 60%)" }} />
+            <div className="absolute top-0 right-0 w-80 h-80 pointer-events-none seo-amazon-cta-glow" aria-hidden="true" />
             <div className="flex-1">
               <p className="text-orange-400 text-xs font-semibold tracking-[0.2em] uppercase mb-2">Start Shipping Today</p>
-              <h2 className="text-2xl sm:text-3xl font-extrabold text-white mb-3" style={{ fontFamily: "'Playfair Display', serif" }}>
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-white mb-3 font-playfair" >
                 Get Your Free US Address & Shop Amazon Now
               </h2>
               <p className="text-orange-200/55 text-sm max-w-md">
@@ -523,8 +510,7 @@ export default function ShipFromAmazon() {
             <div className="flex flex-col gap-3 shrink-0 w-full sm:w-auto">
               <Link
                 to="/register"
-                className="px-8 py-3.5 rounded-2xl font-bold text-white text-sm text-center transition-all hover:scale-105 active:scale-95"
-                style={{ background: "linear-gradient(135deg, #ea580c, #c2410c)", boxShadow: "0 4px 20px rgba(234,88,12,0.5)" }}
+                className="px-8 py-3.5 rounded-2xl font-bold text-white text-sm text-center transition-all hover:scale-105 active:scale-95 btn-cta-orange"
               >
                 Get My US Address →
               </Link>

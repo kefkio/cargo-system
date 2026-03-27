@@ -1,5 +1,6 @@
 // src/components/shipment/PickupRequest.jsx
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 
@@ -20,6 +21,7 @@ const US_STATES = [
 const STEPS = ["Contact", "Address", "Package"];
 
 export default function PickupRequest({ onClose }) {
+  const navigate = useNavigate();
   const [step, setStep] = useState(0);
   const [form, setForm] = useState({
     name: "", email: "", phone: "",
@@ -40,7 +42,11 @@ export default function PickupRequest({ onClose }) {
 
   const handleClose = () => {
     setVisible(false);
-    setTimeout(onClose, 300);
+    if (onClose) {
+      setTimeout(onClose, 300);
+    } else {
+      setTimeout(() => navigate(-1), 300);
+    }
   };
 
   const handleChange = (e) => {
@@ -83,14 +89,18 @@ export default function PickupRequest({ onClose }) {
     if (!validateStep()) return;
     setLoading(true);
     try {
-      await fetch("/api/pickup-request", {
+      const API_URL = import.meta.env.VITE_API_URL.replace(/\/accounts\/?$/, '');
+      const res = await fetch(`${API_URL}/pickup-request`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
-      await fetch(`/api/send-whatsapp?phone=${encodeURIComponent(form.phone)}&message=Pickup+request+received`);
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || "Submission failed");
+      }
       setSubmitted(true);
-      setTimeout(() => { setVisible(false); setTimeout(onClose, 300); }, 3000);
+      setTimeout(() => { setVisible(false); setTimeout(() => handleClose(), 300); }, 3000);
     } catch (err) {
       console.error("Pickup request failed:", err);
       alert("Failed to submit request. Please try again.");
@@ -146,10 +156,7 @@ export default function PickupRequest({ onClose }) {
         >
           {/* Gradient header band */}
           <div
-            style={{
-              background: "linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #0ea5e9 100%)",
-            }}
-            className="px-6 pt-7 pb-10"
+            className="px-6 pt-7 pb-10 pickup-header-gradient"
           >
             <button
               onClick={handleClose}

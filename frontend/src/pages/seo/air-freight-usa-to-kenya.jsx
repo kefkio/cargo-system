@@ -142,14 +142,12 @@ export default function AirFreightUSAtoKenya() {
         <script type="application/ld+json">{JSON.stringify(FAQ_SCHEMA)}</script>
       </Helmet>
 
-      <div style={{ fontFamily: "'Outfit', sans-serif", background: "#f8fafc" }}>
+      <div className="seo-air-page">
 
         {/* ── HERO ─────────────────────────────────────────────────────────── */}
-        <div className="relative overflow-hidden" style={{ background: "linear-gradient(135deg, #0c1a2e 0%, #0f3460 55%, #1a5276 100%)" }}>
-          <div className="absolute inset-0 pointer-events-none" aria-hidden="true"
-            style={{ backgroundImage: "radial-gradient(circle at 20% 50%, rgba(56,189,248,0.08) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(245,158,11,0.07) 0%, transparent 40%)" }} />
-          <div className="absolute inset-0 pointer-events-none opacity-[0.03]" aria-hidden="true"
-            style={{ backgroundImage: "repeating-linear-gradient(45deg, #fff 0, #fff 1px, transparent 0, transparent 50%)", backgroundSize: "40px 40px" }} />
+        <div className="relative overflow-hidden seo-air-hero-bg">
+          <div className="absolute inset-0 pointer-events-none seo-air-hero-glow" aria-hidden="true" />
+          <div className="absolute inset-0 pointer-events-none opacity-[0.03] seo-air-hero-pattern" aria-hidden="true" />
 
           {/* Back to home */}
           <div className="relative max-w-6xl mx-auto px-6 pt-6">
@@ -159,10 +157,10 @@ export default function AirFreightUSAtoKenya() {
           <div className="relative max-w-6xl mx-auto px-6 pt-8 pb-20 grid lg:grid-cols-2 gap-12 items-center">
             <div>
               <SectionLabel text="Air Freight Service" light />
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-[1.1] mb-6"
-                style={{ fontFamily: "'Playfair Display', serif" }}>
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-[1.1] mb-6 font-playfair"
+                >
                 Air Freight<br />
-                <span style={{ color: "#f59e0b" }}>USA → Kenya</span>
+                <span className="seo-air-accent">USA → Kenya</span>
               </h1>
               <p className="text-slate-300 text-lg leading-relaxed mb-8 max-w-lg">
                 The fastest, most reliable way to ship packages from the United States to Kenya.
@@ -178,15 +176,14 @@ export default function AirFreightUSAtoKenya() {
                 ].map(({ label, value }) => (
                   <div key={label} className="bg-white/10 backdrop-blur-sm border border-white/15 rounded-2xl px-5 py-3">
                     <p className="text-xs text-slate-400 font-medium tracking-wide uppercase mb-0.5">{label}</p>
-                    <p className="text-xl font-bold text-amber-400" style={{ fontFamily: "'Playfair Display', serif" }}>{value}</p>
+                    <p className="text-xl font-bold text-amber-400 font-playfair" >{value}</p>
                   </div>
                 ))}
               </div>
 
               <div className="flex flex-wrap gap-3">
                 <Link to="/#calculator"
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl font-bold text-slate-900 text-sm transition-all duration-200 hover:scale-105 active:scale-95"
-                  style={{ background: "linear-gradient(135deg, #f59e0b, #d97706)", boxShadow: "0 4px 20px rgba(245,158,11,0.4)" }}>
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl font-bold text-slate-900 text-sm transition-all duration-200 hover:scale-105 active:scale-95 btn-cta-amber">
                   ✈️ Calculate My Cost
                 </Link>
                 <a href="https://wa.me/254701203325" target="_blank" rel="noopener noreferrer"
@@ -198,10 +195,9 @@ export default function AirFreightUSAtoKenya() {
 
             {/* Visual card */}
             <div className="hidden lg:flex justify-center">
-              <div className="relative w-80 h-80 rounded-3xl flex flex-col items-center justify-center text-center p-8"
-                style={{ background: "linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02))", border: "1px solid rgba(255,255,255,0.12)", backdropFilter: "blur(12px)", boxShadow: "0 25px 50px rgba(0,0,0,0.3)" }}>
+              <div className="relative w-80 h-80 rounded-3xl flex flex-col items-center justify-center text-center p-8 glass-card-light">
                 <div className="text-7xl mb-4" aria-hidden="true">✈️</div>
-                <div className="text-5xl font-extrabold text-amber-400 mb-1" style={{ fontFamily: "'Playfair Display', serif" }}>5–10</div>
+                <div className="text-5xl font-extrabold text-amber-400 mb-1 font-playfair" >5–10</div>
                 <div className="text-slate-300 font-semibold text-lg mb-3">Days to Kenya</div>
                 <div className="w-12 h-0.5 bg-amber-400/40 mx-auto mb-3" />
                 <p className="text-slate-400 text-sm">USA → Nairobi & nationwide delivery</p>
@@ -214,7 +210,7 @@ export default function AirFreightUSAtoKenya() {
         <div className="max-w-6xl mx-auto px-6 py-20">
           <div className="text-center mb-14">
             <SectionLabel text="Why Choose Air Freight" />
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900" style={{ fontFamily: "'Playfair Display', serif" }}>
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 font-playfair" >
               Everything Included in Every Shipment
             </h2>
             <p className="text-gray-500 mt-3 max-w-xl mx-auto">
@@ -233,11 +229,11 @@ export default function AirFreightUSAtoKenya() {
         </div>
 
         {/* ── HOW IT WORKS ────────────────────────────────────────────────── */}
-        <div className="py-20" style={{ background: "linear-gradient(180deg, #f0f9ff, #e0f2fe)" }}>
+        <div className="py-20 seo-air-features-bg">
           <div className="max-w-6xl mx-auto px-6">
             <div className="text-center mb-14">
               <SectionLabel text="Step by Step" />
-              <h2 className="text-3xl sm:text-4xl font-bold text-gray-900" style={{ fontFamily: "'Playfair Display', serif" }}>
+              <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 font-playfair" >
                 How Air Freight Works
               </h2>
               <p className="text-gray-500 mt-3 max-w-xl mx-auto">
@@ -245,12 +241,10 @@ export default function AirFreightUSAtoKenya() {
               </p>
             </div>
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 relative">
-              <div className="hidden lg:block absolute top-8 left-[12.5%] right-[12.5%] h-px"
-                style={{ background: "linear-gradient(90deg, transparent, #0ea5e9, #0ea5e9, transparent)" }} aria-hidden="true" />
+              <div className="hidden lg:block absolute top-8 left-[12.5%] right-[12.5%] h-px seo-air-step-line" aria-hidden="true" />
               {STEPS.map(({ number, title, body }) => (
                 <div key={number} className="text-center">
-                  <div className="w-16 h-16 rounded-2xl mx-auto mb-4 flex items-center justify-center font-extrabold text-xl relative z-10"
-                    style={{ background: "linear-gradient(135deg, #0f172a, #1e3a5f)", color: "#f59e0b", fontFamily: "'Playfair Display', serif", boxShadow: "0 4px 16px rgba(15,23,42,0.25)" }}
+                  <div className="w-16 h-16 rounded-2xl mx-auto mb-4 flex items-center justify-center font-extrabold text-xl relative z-10 seo-air-step-number"
                     aria-hidden="true">{number}</div>
                   <h3 className="font-bold text-gray-900 mb-2">{title}</h3>
                   <p className="text-gray-500 text-sm leading-relaxed">{body}</p>
@@ -262,13 +256,11 @@ export default function AirFreightUSAtoKenya() {
 
         {/* ── PRICING CTA ──────────────────────────────────────────────────── */}
         <div className="max-w-6xl mx-auto px-6 py-20">
-          <div className="relative rounded-3xl overflow-hidden p-10 sm:p-14 flex flex-col sm:flex-row items-center gap-8"
-            style={{ background: "linear-gradient(135deg, #0f172a 0%, #1e3a5f 60%, #0c2340 100%)" }}>
-            <div className="absolute top-0 right-0 w-80 h-80 pointer-events-none" aria-hidden="true"
-              style={{ background: "radial-gradient(circle at top right, rgba(245,158,11,0.15), transparent 60%)" }} />
+          <div className="relative rounded-3xl overflow-hidden p-10 sm:p-14 flex flex-col sm:flex-row items-center gap-8 seo-air-cta-bg">
+            <div className="absolute top-0 right-0 w-80 h-80 pointer-events-none seo-air-cta-glow" aria-hidden="true" />
             <div className="flex-1">
               <p className="text-sky-400 text-xs font-semibold tracking-[0.2em] uppercase mb-2">Air Freight Rate</p>
-              <h2 className="text-3xl sm:text-4xl font-extrabold text-white mb-3" style={{ fontFamily: "'Playfair Display', serif" }}>
+              <h2 className="text-3xl sm:text-4xl font-extrabold text-white mb-3 font-playfair" >
                 From <span className="text-amber-400">$16.99</span>
                 <span className="text-slate-400 text-xl font-normal"> / kg</span>
               </h2>
@@ -278,8 +270,7 @@ export default function AirFreightUSAtoKenya() {
             </div>
             <div className="flex flex-col gap-3 shrink-0 w-full sm:w-auto">
               <Link to="/#calculator"
-                className="px-8 py-3.5 rounded-2xl font-bold text-slate-900 text-sm text-center transition-all hover:scale-105 active:scale-95"
-                style={{ background: "linear-gradient(135deg, #f59e0b, #d97706)", boxShadow: "0 4px 20px rgba(245,158,11,0.4)" }}>
+                className="px-8 py-3.5 rounded-2xl font-bold text-slate-900 text-sm text-center transition-all hover:scale-105 active:scale-95 btn-cta-amber">
                 Get Instant Quote →
               </Link>
               <a href="https://wa.me/254701203325" target="_blank" rel="noopener noreferrer"
@@ -295,7 +286,7 @@ export default function AirFreightUSAtoKenya() {
           <div className="max-w-3xl mx-auto px-6">
             <div className="text-center mb-12">
               <SectionLabel text="FAQ" />
-              <h2 className="text-3xl sm:text-4xl font-bold text-gray-900" style={{ fontFamily: "'Playfair Display', serif" }}>
+              <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 font-playfair" >
                 Frequently Asked Questions
               </h2>
               <p className="text-gray-500 mt-3">Common questions about air freight shipping from the USA to Kenya.</p>

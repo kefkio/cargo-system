@@ -216,19 +216,16 @@ export default function SeaFreightUSAtoKenya() {
         <script type="application/ld+json">{JSON.stringify(FAQ_SCHEMA)}</script>
       </Helmet>
 
-      <div style={{ fontFamily: "'Outfit', sans-serif", background: "#f0fdfa" }}>
+      <div className="seo-sea-page">
 
         {/* ── HERO ──────────────────────────────────────────────────────────── */}
         <div
-          className="relative overflow-hidden"
-          style={{ background: "linear-gradient(135deg, #042f2e 0%, #065f46 50%, #0f766e 100%)" }}
+          className="relative overflow-hidden seo-sea-hero-bg"
         >
           {/* Background effects */}
-          <div className="absolute inset-0 pointer-events-none" aria-hidden="true"
-            style={{ backgroundImage: "radial-gradient(circle at 15% 60%, rgba(20,184,166,0.12) 0%, transparent 50%), radial-gradient(circle at 85% 20%, rgba(245,158,11,0.08) 0%, transparent 40%)" }} />
+          <div className="absolute inset-0 pointer-events-none seo-sea-hero-glow" aria-hidden="true" />
           {/* Wave pattern */}
-          <div className="absolute bottom-0 left-0 right-0 h-24 pointer-events-none opacity-10" aria-hidden="true"
-            style={{ backgroundImage: "repeating-linear-gradient(0deg, transparent, transparent 10px, rgba(255,255,255,0.3) 10px, rgba(255,255,255,0.3) 11px)", backgroundSize: "100% 22px" }} />
+          <div className="absolute bottom-0 left-0 right-0 h-24 pointer-events-none opacity-10 seo-sea-hero-pattern" aria-hidden="true" />
 
           {/* Back to home */}
           <div className="relative max-w-6xl mx-auto px-6 pt-6">
@@ -247,11 +244,11 @@ export default function SeaFreightUSAtoKenya() {
             <div>
               <SectionLabel text="Sea Freight Service" light />
               <h1
-                className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-[1.1] mb-6"
-                style={{ fontFamily: "'Playfair Display', serif" }}
+                className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-[1.1] mb-6 font-playfair"
+                
               >
                 Sea Freight<br />
-                <span style={{ color: "#2dd4bf" }}>USA → Kenya</span>
+                <span className="seo-sea-accent">USA → Kenya</span>
               </h1>
               <p className="text-emerald-100/80 text-lg leading-relaxed mb-8 max-w-lg">
                 The most affordable way to ship large, heavy, or bulk cargo from the United States to Kenya.
@@ -268,7 +265,7 @@ export default function SeaFreightUSAtoKenya() {
                 ].map(({ label, value }) => (
                   <div key={label} className="bg-white/10 backdrop-blur-sm border border-white/15 rounded-2xl px-5 py-3">
                     <p className="text-xs text-emerald-300/70 font-medium tracking-wide uppercase mb-0.5">{label}</p>
-                    <p className="text-xl font-bold text-amber-400" style={{ fontFamily: "'Playfair Display', serif" }}>{value}</p>
+                    <p className="text-xl font-bold text-amber-400 font-playfair" >{value}</p>
                   </div>
                 ))}
               </div>
@@ -276,8 +273,7 @@ export default function SeaFreightUSAtoKenya() {
               <div className="flex flex-wrap gap-3">
                 <Link
                   to="/#calculator"
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl font-bold text-slate-900 text-sm transition-all duration-200 hover:scale-105 active:scale-95"
-                  style={{ background: "linear-gradient(135deg, #f59e0b, #d97706)", boxShadow: "0 4px 20px rgba(245,158,11,0.4)" }}
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl font-bold text-slate-900 text-sm transition-all duration-200 hover:scale-105 active:scale-95 btn-cta-amber"
                 >
                   🚢 Calculate My Cost
                 </Link>
@@ -295,11 +291,10 @@ export default function SeaFreightUSAtoKenya() {
             {/* Visual card */}
             <div className="hidden lg:flex justify-center">
               <div
-                className="relative w-80 h-80 rounded-3xl flex flex-col items-center justify-center text-center p-8"
-                style={{ background: "linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02))", border: "1px solid rgba(255,255,255,0.12)", backdropFilter: "blur(12px)", boxShadow: "0 25px 50px rgba(0,0,0,0.3)" }}
+                className="relative w-80 h-80 rounded-3xl flex flex-col items-center justify-center text-center p-8 glass-card-light"
               >
                 <div className="text-7xl mb-4" aria-hidden="true">🚢</div>
-                <div className="text-5xl font-extrabold text-teal-300 mb-1" style={{ fontFamily: "'Playfair Display', serif" }}>4–6</div>
+                <div className="text-5xl font-extrabold text-teal-300 mb-1 font-playfair" >4–6</div>
                 <div className="text-emerald-200/80 font-semibold text-lg mb-3">Weeks to Kenya</div>
                 <div className="w-12 h-0.5 bg-teal-400/40 mx-auto mb-3" />
                 <p className="text-emerald-300/60 text-sm">
@@ -314,7 +309,7 @@ export default function SeaFreightUSAtoKenya() {
         <div className="max-w-6xl mx-auto px-6 py-20">
           <div className="text-center mb-14">
             <SectionLabel text="Why Choose Sea Freight" />
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900" style={{ fontFamily: "'Playfair Display', serif" }}>
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 font-playfair" >
               Built for Large Shipments
             </h2>
             <p className="text-gray-500 mt-3 max-w-xl mx-auto">
@@ -336,11 +331,11 @@ export default function SeaFreightUSAtoKenya() {
         </div>
 
         {/* ── HOW IT WORKS ──────────────────────────────────────────────────── */}
-        <div className="py-20" style={{ background: "linear-gradient(180deg, #f0fdf4, #dcfce7)" }}>
+        <div className="py-20 seo-sea-howitworks-bg">
           <div className="max-w-6xl mx-auto px-6">
             <div className="text-center mb-14">
               <SectionLabel text="Step by Step" />
-              <h2 className="text-3xl sm:text-4xl font-bold text-gray-900" style={{ fontFamily: "'Playfair Display', serif" }}>
+              <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 font-playfair" >
                 How Sea Freight Works
               </h2>
               <p className="text-gray-500 mt-3 max-w-xl mx-auto">
@@ -348,13 +343,11 @@ export default function SeaFreightUSAtoKenya() {
               </p>
             </div>
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 relative">
-              <div className="hidden lg:block absolute top-8 left-[12.5%] right-[12.5%] h-px"
-                style={{ background: "linear-gradient(90deg, transparent, #0d9488, #0d9488, transparent)" }} aria-hidden="true" />
+              <div className="hidden lg:block absolute top-8 left-[12.5%] right-[12.5%] h-px seo-sea-step-line" aria-hidden="true" />
               {STEPS.map(({ number, title, body }) => (
                 <div key={number} className="text-center">
                   <div
-                    className="w-16 h-16 rounded-2xl mx-auto mb-4 flex items-center justify-center font-extrabold text-xl relative z-10"
-                    style={{ background: "linear-gradient(135deg, #042f2e, #065f46)", color: "#2dd4bf", fontFamily: "'Playfair Display', serif", boxShadow: "0 4px 16px rgba(4,47,46,0.3)" }}
+                    className="w-16 h-16 rounded-2xl mx-auto mb-4 flex items-center justify-center font-extrabold text-xl relative z-10 seo-sea-step-number"
                     aria-hidden="true"
                   >{number}</div>
                   <h3 className="font-bold text-gray-900 mb-2">{title}</h3>
@@ -369,7 +362,7 @@ export default function SeaFreightUSAtoKenya() {
         <div className="max-w-6xl mx-auto px-6 py-20">
           <div className="text-center mb-14">
             <SectionLabel text="Compare Options" />
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900" style={{ fontFamily: "'Playfair Display', serif" }}>
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 font-playfair" >
               Air Freight vs Sea Freight
             </h2>
             <p className="text-gray-500 mt-3 max-w-xl mx-auto">
@@ -419,14 +412,12 @@ export default function SeaFreightUSAtoKenya() {
         {/* ── PRICING CTA ───────────────────────────────────────────────────── */}
         <div className="max-w-6xl mx-auto px-6 pb-20">
           <div
-            className="relative rounded-3xl overflow-hidden p-10 sm:p-14 flex flex-col sm:flex-row items-center gap-8"
-            style={{ background: "linear-gradient(135deg, #042f2e 0%, #065f46 55%, #0f766e 100%)" }}
+            className="relative rounded-3xl overflow-hidden p-10 sm:p-14 flex flex-col sm:flex-row items-center gap-8 seo-sea-cta-bg"
           >
-            <div className="absolute top-0 right-0 w-80 h-80 pointer-events-none" aria-hidden="true"
-              style={{ background: "radial-gradient(circle at top right, rgba(45,212,191,0.15), transparent 60%)" }} />
+            <div className="absolute top-0 right-0 w-80 h-80 pointer-events-none seo-sea-cta-glow" aria-hidden="true" />
             <div className="flex-1">
               <p className="text-teal-300 text-xs font-semibold tracking-[0.2em] uppercase mb-2">Sea Freight Rates</p>
-              <h2 className="text-3xl sm:text-4xl font-extrabold text-white mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>
+              <h2 className="text-3xl sm:text-4xl font-extrabold text-white mb-2 font-playfair" >
                 From <span className="text-amber-400">$30</span>
                 <span className="text-slate-400 text-xl font-normal"> / ft³</span>
               </h2>
@@ -438,8 +429,7 @@ export default function SeaFreightUSAtoKenya() {
             <div className="flex flex-col gap-3 shrink-0 w-full sm:w-auto">
               <Link
                 to="/#calculator"
-                className="px-8 py-3.5 rounded-2xl font-bold text-slate-900 text-sm text-center transition-all hover:scale-105 active:scale-95"
-                style={{ background: "linear-gradient(135deg, #f59e0b, #d97706)", boxShadow: "0 4px 20px rgba(245,158,11,0.4)" }}
+                className="px-8 py-3.5 rounded-2xl font-bold text-slate-900 text-sm text-center transition-all hover:scale-105 active:scale-95 btn-cta-amber"
               >
                 Get Instant Quote →
               </Link>
@@ -460,7 +450,7 @@ export default function SeaFreightUSAtoKenya() {
           <div className="max-w-3xl mx-auto px-6">
             <div className="text-center mb-12">
               <SectionLabel text="FAQ" />
-              <h2 className="text-3xl sm:text-4xl font-bold text-gray-900" style={{ fontFamily: "'Playfair Display', serif" }}>
+              <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 font-playfair" >
                 Frequently Asked Questions
               </h2>
               <p className="text-gray-500 mt-3">Common questions about sea freight from the USA to Kenya.</p>
