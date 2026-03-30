@@ -1,3 +1,116 @@
+# -----------------------------
+# Client Reports (on-demand, detailed)
+# -----------------------------
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from django.utils import timezone
+from datetime import timedelta
+from decimal import Decimal
+from django.db.models import Count, Sum, Q
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def client_reports(request):
+    """
+    Detailed, on-demand report for the authenticated client.
+    Query params:
+      - period: day | week | month | year | custom  (default: month)
+      - date_from / date_to: for custom range (YYYY-MM-DD)
+    """
+    if getattr(request.user, "role", None) != "CLIENT":
+        return Response({"error": "Not a client user"}, status=403)
+
+    now = timezone.now()
+    period = request.query_params.get("period", "month")
+    date_from = request.query_params.get("date_from")
+    date_to = request.query_params.get("date_to")
+
+    # Determine date range
+    if period == "custom" and date_from:
+        from datetime import datetime as dt
+        start = timezone.make_aware(dt.strptime(date_from, "%Y-%m-%d"))
+        end = timezone.make_aware(dt.strptime(date_to, "%Y-%m-%d").replace(hour=23, minute=59, second=59)) if date_to else now
+    elif period == "day":
+        start = now.replace(hour=0, minute=0, second=0, microsecond=0)
+        end = now
+    elif period == "week":
+        start = now - timedelta(days=7)
+        end = now
+    elif period == "year":
+        start = now - timedelta(days=365)
+        end = now
+    else:  # month
+        start = now - timedelta(days=30)
+        end = now
+
+    # ── Shipment metrics ──
+    all_shipments_qs = Cargo.objects.filter(client=request.user)
+    period_shipments = all_shipments_qs.filter(intake_date__range=(start, end))
+
+    shipments_by_status = dict(
+        period_shipments.values_list("status").annotate(c=Count("id")).values_list("status", "c")
+    )
+    shipments_by_mode = dict(
+        period_shipments.exclude(transport_mode__isnull=True)
+        .values_list("transport_mode").annotate(c=Count("id")).values_list("transport_mode", "c")
+    )
+    total_weight = period_shipments.aggregate(w=Sum("weight_kg"))["w"] or Decimal("0")
+
+    delivered_count = period_shipments.filter(status="Delivered").count()
+    total_period = period_shipments.count()
+
+    # Daily shipment trend
+    from django.db.models.functions import TruncDate
+    daily_trend = list(
+        period_shipments.annotate(day=TruncDate("intake_date"))
+        .values("day")
+        .annotate(count=Count("id"))
+        .order_by("day")
+        .values("day", "count")
+    )
+
+    # ── Invoice metrics ──
+    all_invoices_qs = Invoice.objects.filter(user=request.user)
+    period_invoices = all_invoices_qs.filter(created_at__range=(start, end))
+
+    paid_invoices = period_invoices.filter(status="paid")
+    outstanding_invoices = period_invoices.filter(status="issued", invoice_type="proforma")
+
+    invoices_by_status = dict(
+        period_invoices.values_list("status").annotate(c=Count("id")).values_list("status", "c")
+    )
+    invoices_by_type = dict(
+        period_invoices.values_list("invoice_type").annotate(c=Count("id")).values_list("invoice_type", "c")
+    )
+    payment_methods = dict(
+        paid_invoices.exclude(payment_method__isnull=True)
+        .values_list("payment_method").annotate(c=Count("id")).values_list("payment_method", "c")
+    )
+
+    response_data = {
+        "period": period,
+        "date_range": {"from": start.isoformat(), "to": end.isoformat()},
+        "shipments": {
+            "total": total_period,
+            "delivered": delivered_count,
+            "delivery_rate": round(delivered_count / total_period * 100, 1) if total_period else 0,
+            "total_weight_kg": float(total_weight),
+            "by_status": shipments_by_status,
+            "by_mode": shipments_by_mode,
+            "daily_trend": [{"day": str(d["day"]), "count": d["count"]} for d in daily_trend],
+        },
+        "invoices": {
+            "total": period_invoices.count(),
+            "by_status": invoices_by_status,
+            "by_type": invoices_by_type,
+            "payment_methods": payment_methods,
+            "paid_count": paid_invoices.count(),
+            "outstanding_count": outstanding_invoices.count(),
+        },
+    }
+
+    return Response(response_data)
 # =============================
 # Imports
 # =============================
@@ -230,13 +343,57 @@ def update_dispatcher(request, shipment_id):
             status=400,
         )
 
+    from django.utils import timezone
+    user = request.user if request.user.is_authenticated else None
     cargo.dispatcher_name = dispatcher_name
     cargo.dispatcher_phone = dispatcher_phone.strip() if dispatcher_phone else ""
     cargo.dispatcher_service = dispatcher_service
-    cargo.dispatch_cost = Decimal(str(request.data.get("dispatch_cost", 0) or 0))
-    cargo.dispatched_datetime = timezone.now()
-    cargo.status = "Dispatched"
+    # New: assign pickup fields
+    cargo.pickup_assigned_to = user
+    cargo.pickup_assigned_at = timezone.now()
+    cargo.status = "Pickup Assigned"
     cargo.save()
+# Close Pickup (Admin, PATCH)
+@api_view(["PATCH"])
+@permission_classes([IsAdminUser])
+def close_pickup(request, shipment_id):
+    """
+    Mark a pickup as closed (picked up by dispatcher, ready for warehouse receipt).
+    """
+    from django.utils import timezone
+    try:
+        cargo = Cargo.objects.get(id=shipment_id)
+    except Cargo.DoesNotExist:
+        return Response({"error": "Shipment not found"}, status=404)
+    if cargo.status != "Pickup Assigned":
+        return Response({"error": f"Can only close pickups with 'Pickup Assigned' status. Current: '{cargo.status}'"}, status=400)
+    cargo.pickup_closed_at = timezone.now()
+    cargo.status = "Pickup Closed"
+    cargo.save()
+    serializer = CargoSerializer(cargo, context={"request": request})
+    return Response(serializer.data)
+
+# Mark Warehouse Receipt (Admin, PATCH)
+@api_view(["PATCH"])
+@permission_classes([IsAdminUser])
+def mark_warehouse_received(request, shipment_id):
+    """
+    Mark a shipment as received at the warehouse.
+    """
+    from django.utils import timezone
+    try:
+        cargo = Cargo.objects.get(id=shipment_id)
+    except Cargo.DoesNotExist:
+        return Response({"error": "Shipment not found"}, status=404)
+    if cargo.status != "Pickup Closed":
+        return Response({"error": f"Can only receive at warehouse from 'Pickup Closed' status. Current: '{cargo.status}'"}, status=400)
+    user = request.user if request.user.is_authenticated else None
+    cargo.warehouse_received_by = user
+    cargo.warehouse_received_at = timezone.now()
+    cargo.status = "Received at Warehouse"
+    cargo.save()
+    serializer = CargoSerializer(cargo, context={"request": request})
+    return Response(serializer.data)
 
     # Upsert DispatchHandler for future autocomplete
     handler, created = DispatchHandler.objects.get_or_create(
@@ -650,6 +807,7 @@ def _create_proforma_invoice(cargo, created_by_email):
         insurance=0,          # Updated manually at dispatch
         customs_duty=0,
         excise_duty=0,
+        reimbursable_vat=0,
         rdl=0,
         idf=0,
         clearance_fee=0,
@@ -695,6 +853,7 @@ def _create_final_invoice(cargo, created_by_email):
         customs_duty=0,       # To be filled at clearance
         excise_duty=0,        # To be filled at clearance
         import_vat=0,         # To be filled at clearance
+        reimbursable_vat=0,   # Manually entered reimbursable VAT for cargo owner
         port_charges=0,       # To be filled at clearance
         clearance_fee=0,      # To be filled at clearance
         rdl=0,                # To be filled at clearance
@@ -770,6 +929,7 @@ def create_manual_proforma(request):
         customs_duty=0,
         excise_duty=0,
         import_vat=0,
+        reimbursable_vat=0,
         port_charges=0,
         clearance_fee=0,
         rdl=0,
@@ -789,9 +949,12 @@ def create_manual_proforma(request):
 # Invoice endpoints
 # =============================================================
 @api_view(["GET"])
-@permission_classes([IsAdminUser])
+@permission_classes([IsAuthenticated])
 def list_invoices(request):
-    """List all invoices, optionally filtered by cargo or type."""
+    """List all invoices, optionally filtered by cargo or type. Accessible to admin and staff."""
+    if not (hasattr(request.user, "role") and request.user.role in ("ADMIN", "STAFF")):
+        return Response({"error": "Only admin or staff can view all invoices."}, status=403)
+
     # Lazily expire/retire stale proformas before returning data
     Invoice.expire_stale_proformas()
 
@@ -868,7 +1031,7 @@ def update_invoice(request, invoice_id):
 
     updatable_fields = [
         "freight_charge", "handling_fee", "insurance", "other_charges",
-        "customs_duty", "excise_duty", "import_vat", "port_charges",
+        "customs_duty", "excise_duty", "import_vat", "reimbursable_vat", "port_charges",
         "clearance_fee", "rdl", "idf",
         "tax_rate", "currency", "notes", "status",
     ]
@@ -907,7 +1070,7 @@ def confirm_clearance_charges(request, invoice_id):
         return Response({"error": "Clearance charges already confirmed."}, status=400)
 
     # Update clearance charge fields from request
-    charge_fields = ["customs_duty", "excise_duty", "import_vat", "port_charges", "rdl", "idf", "clearance_fee", "other_charges"]
+    charge_fields = ["customs_duty", "excise_duty", "import_vat", "reimbursable_vat", "port_charges", "rdl", "idf", "clearance_fee", "other_charges"]
     for field in charge_fields:
         if field in request.data:
             setattr(invoice, field, request.data[field])
@@ -1550,6 +1713,7 @@ def staff_reports(request):
         customs=Sum("customs_duty"),
         excise=Sum("excise_duty"),
         imp_vat=Sum("import_vat"),
+        reimb_vat=Sum("reimbursable_vat"),
         port=Sum("port_charges"),
         clearance=Sum("clearance_fee"),
         rdl_sum=Sum("rdl"),
@@ -1557,7 +1721,7 @@ def staff_reports(request):
     )
     z = Decimal("0")
     taxable_total = (paid_agg["freight"] or z) + (paid_agg["handling"] or z) + (paid_agg["insurance"] or z) + (paid_agg["other"] or z)
-    disbursements_total = ((paid_agg["customs"] or z) + (paid_agg["excise"] or z) + (paid_agg["imp_vat"] or z)
+    disbursements_total = ((paid_agg["customs"] or z) + (paid_agg["excise"] or z) + (paid_agg["imp_vat"] or z) + (paid_agg["reimb_vat"] or z)
                           + (paid_agg["port"] or z) + (paid_agg["clearance"] or z)
                           + (paid_agg["rdl_sum"] or z) + (paid_agg["idf_sum"] or z))
 
@@ -1601,6 +1765,7 @@ def staff_reports(request):
             day_customs=Sum("customs_duty"),
             day_excise=Sum("excise_duty"),
             day_imp_vat=Sum("import_vat"),
+            day_reimb_vat=Sum("reimbursable_vat"),
             day_port=Sum("port_charges"),
             day_clearance=Sum("clearance_fee"),
             day_rdl=Sum("rdl"),
@@ -1611,7 +1776,7 @@ def staff_reports(request):
     )
     for row in daily_paid:
         day_taxable = (row["day_freight"] or z) + (row["day_handling"] or z) + (row["day_insurance"] or z) + (row["day_other"] or z)
-        day_disb = ((row["day_customs"] or z) + (row["day_excise"] or z) + (row["day_imp_vat"] or z)
+        day_disb = ((row["day_customs"] or z) + (row["day_excise"] or z) + (row["day_imp_vat"] or z) + (row["day_reimb_vat"] or z)
                     + (row["day_port"] or z) + (row["day_clearance"] or z) + (row["day_rdl"] or z) + (row["day_idf"] or z))
         day_vat = round(day_taxable * Decimal("0.16"), 2)  # approximate with default rate
         revenue_by_day.append({

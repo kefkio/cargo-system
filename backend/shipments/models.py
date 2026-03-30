@@ -34,6 +34,9 @@ class Warehouse(models.Model):
 class Cargo(models.Model):
     STATUS_CHOICES = [
         ("Pickup Requested", "Pickup Requested"),
+        ("Pickup Assigned", "Pickup Assigned"),
+        ("Pickup Closed", "Pickup Closed"),
+        ("Received at Warehouse", "Received at Warehouse"),
         ("Shipment Created", "Shipment Created"),
         ("Processing at Origin", "Processing at Origin"),
         ("In Transit", "In Transit"),
@@ -46,6 +49,26 @@ class Cargo(models.Model):
         ("Not Picked Up", "Not Picked Up"),
         ("Compensated", "Compensated"),
     ]
+    # Pickup assignment and warehouse receipt tracking
+    pickup_assigned_to = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="assigned_pickups",
+        help_text="Staff assigned to pick up the cargo"
+    )
+    pickup_assigned_at = models.DateTimeField(blank=True, null=True)
+    pickup_closed_at = models.DateTimeField(blank=True, null=True)
+    warehouse_received_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="warehouse_received_cargos",
+        help_text="Staff who received the cargo at warehouse"
+    )
+    warehouse_received_at = models.DateTimeField(blank=True, null=True)
 
     # Core identifiers
     tracking_number = models.CharField(max_length=50, unique=True, editable=False)
@@ -209,6 +232,7 @@ class Invoice(models.Model):
     customs_duty = models.DecimalField(max_digits=12, decimal_places=2, default=0, help_text="Import Duty")
     excise_duty = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     import_vat = models.DecimalField(max_digits=12, decimal_places=2, default=0, help_text="Import VAT paid at KRA")
+    reimbursable_vat = models.DecimalField(max_digits=12, decimal_places=2, default=0, help_text="Reimbursable VAT charged to cargo owner")
     port_charges = models.DecimalField(max_digits=12, decimal_places=2, default=0, help_text="Port/terminal charges")
     clearance_fee = models.DecimalField(max_digits=12, decimal_places=2, default=0, help_text="Clearance fees paid to third parties")
     rdl = models.DecimalField(max_digits=12, decimal_places=2, default=0, help_text="Railway Development Levy")
@@ -238,7 +262,7 @@ class Invoice(models.Model):
     def disbursements_subtotal(self):
         """Sum of costs incurred on behalf of client — NOT subject to VAT."""
         return (
-            self.customs_duty + self.excise_duty + self.import_vat
+            self.customs_duty + self.excise_duty + self.import_vat + self.reimbursable_vat
             + self.port_charges + self.clearance_fee + self.rdl + self.idf
         )
 

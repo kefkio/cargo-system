@@ -1,7 +1,53 @@
 
+# =========================================================
+# Imports
+# =========================================================
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated, AllowAny, BasePermission
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework_simplejwt.tokens import RefreshToken
+from django.contrib.auth import get_user_model
+from django.contrib.auth.tokens import default_token_generator
+from django.core.mail import send_mail
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes, force_str
+from django.utils import timezone
+from .models import DeleteRequest
+from .serializers import AdminListSerializer, RegisterSerializer
+
+# =========================================================
+# Permissions (must be at the very top before any usage)
+# =========================================================
+class IsSuperAdmin(BasePermission):
+    def has_permission(self, request, view):
+        return request.user and request.user.role == "SUPERADMIN"
+
+# =========================================================
+# CREATE SUPERADMIN (API)
+# =========================================================
+@api_view(["POST"])
+@permission_classes([IsSuperAdmin, IsAuthenticated])
+def create_superadmin(request):
+    data = request.data.copy()
+    data["role"] = "SUPERADMIN"  # Force role
+    serializer = RegisterSerializer(data=data)
+    if serializer.is_valid():
+        user = serializer.save()
+        return Response({
+            "id": user.id,
+            "email": user.email,
+            "role": user.role,
+            "message": "SuperAdmin created successfully."
+        }, status=201)
+    return Response(serializer.errors, status=400)
+
 # accounts/api_views.py
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny, BasePermission
+
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -15,8 +61,16 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from django.utils import timezone
 
+
 from .models import DeleteRequest
 from .serializers import AdminListSerializer
+
+# =========================================================
+# Permissions (move to top so IsSuperAdmin is defined before use)
+# =========================================================
+class IsSuperAdmin(BasePermission):
+    def has_permission(self, request, view):
+        return request.user and request.user.role == "SUPERADMIN"
 
 # =========================================================
 # DASHBOARD ACTIVITY & SERVICES (PLACEHOLDER)

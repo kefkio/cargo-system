@@ -1,10 +1,12 @@
 # accounts/urls.py
+# accounts/urls.py
 from django.urls import path
 from rest_framework_simplejwt.views import TokenRefreshView
 from django.contrib.auth import views as auth_views
 from . import api_views
 
 # Required for namespacing in include()
+
 app_name = "accounts"
 
 urlpatterns = [
@@ -21,8 +23,11 @@ urlpatterns = [
     path("staff/<int:user_id>/", api_views.update_staff, name="update_staff"),
     path("clients/<int:user_id>/", api_views.update_client, name="update_client"),
     path("request-delete/", api_views.request_delete, name="request_delete"),
+
     path("approve-delete/", api_views.approve_delete, name="approve_delete"),
-# Dashboard endpoints
+    path("create-superadmin/", api_views.create_superadmin, name="create_superadmin"),
+
+    # Dashboard endpoints
     path("dashboard/stats/", api_views.dashboard_stats, name="dashboard_stats"),
     path("dashboard/activity/", api_views.dashboard_activity, name="dashboard_activity"),
     path("dashboard/services/", api_views.dashboard_services, name="dashboard_services"),

@@ -10,6 +10,7 @@ urlpatterns = [
     # -----------------------------
     path('client/', views.my_shipments, name='client_shipments'),
     path('client/invoices/', views.my_invoices, name='client_invoices'),
+    path('client/reports/', views.client_reports, name='client_reports'),
     path('', views.all_shipments, name='all_shipments'),
 
     # -----------------------------
@@ -34,6 +35,8 @@ urlpatterns = [
     path('admin/stats/', views.dashboard_stats, name='dashboard_stats'),
     path('admin/reports/', views.staff_reports, name='staff_reports'),
     path('admin/update-dispatcher/<int:shipment_id>/', views.update_dispatcher, name='update_dispatcher'),
+    path('admin/close-pickup/<int:shipment_id>/', views.close_pickup, name='close_pickup'),
+    path('admin/warehouse-receipt/<int:shipment_id>/', views.mark_warehouse_received, name='warehouse_receipt'),
     path('admin/dispatch-handlers/', views.list_dispatch_handlers, name='dispatch_handlers'),
     path('admin/update-status/<int:shipment_id>/', views.update_status, name='update_status'),
     path('admin/receive-shipment/<int:shipment_id>/', views.receive_shipment, name='receive_shipment'),
