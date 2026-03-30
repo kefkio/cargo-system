@@ -47,6 +47,7 @@ export default function PrintableInvoice({
   const disbursementRows = [
     { desc: "Import Duty", amt: inv.customs_duty },
     { desc: "Excise Duty", amt: inv.excise_duty },
+    { desc: "Reimbursable VAT", amt: inv.reimbursable_vat },
     { desc: "Import VAT (KRA)", amt: inv.import_vat },
     { desc: "Port Charges", amt: inv.port_charges },
     { desc: "Clearance Fees", amt: inv.clearance_fee },

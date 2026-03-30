@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { FaTruck, FaUser, FaMapMarkerAlt, FaCalendarAlt, FaSave } from "react-icons/fa";
+import { FaWarehouse, FaCheckCircle } from "react-icons/fa";
 
-export default function PickupRequestsPanel({ token }) {
+export default function PickupRequestsPanel({ token, clientView }) {
   const [pickups, setPickups] = useState([]);
   const [loading, setLoading] = useState(true);
   const [dispatchData, setDispatchData] = useState({}); // store temp dispatcher info
@@ -12,12 +13,22 @@ export default function PickupRequestsPanel({ token }) {
   useEffect(() => {
     const fetchPickups = async () => {
       try {
-        const res = await fetch(`${API_URL}/shipments/admin/pickup-requests/`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        let url, headers = { Authorization: `Bearer ${token}` };
+        if (clientView) {
+          url = `${API_URL}/shipments/client/`;
+        } else {
+          url = `${API_URL}/shipments/admin/pickup-requests/`;
+        }
+        const res = await fetch(url, { headers });
         if (!res.ok) throw new Error("Failed to fetch pickup requests");
-        const data = await res.json();
-        setPickups(Array.isArray(data) ? data : data.results || []);
+        let data = await res.json();
+        // For client, filter only shipments with pickup requested
+        if (clientView) {
+          data = (Array.isArray(data) ? data : data.results || []).filter(s => s.pickup_requested_at);
+        } else {
+          data = Array.isArray(data) ? data : data.results || [];
+        }
+        setPickups(data);
       } catch (err) {
         console.error(err);
       } finally {
@@ -26,7 +37,7 @@ export default function PickupRequestsPanel({ token }) {
     };
 
     fetchPickups();
-  }, [token, API_URL]);
+  }, [token, API_URL, clientView]);
 
   const handleInputChange = (shipmentId, field, value) => {
     setDispatchData((prev) => ({
@@ -51,6 +62,45 @@ export default function PickupRequestsPanel({ token }) {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
+        // Close pickup (Pickup Closed)
+        const handleClosePickup = async (shipmentId) => {
+          setSaving(true);
+          try {
+            const res = await fetch(`${API_URL}/shipments/admin/close-pickup/${shipmentId}/`, {
+              method: "PATCH",
+              headers: { Authorization: `Bearer ${token}` },
+            });
+            if (!res.ok) throw new Error("Failed to close pickup");
+            const updated = await res.json();
+            setPickups((prev) => prev.map((p) => (p.id === shipmentId ? updated : p)));
+            alert("Pickup closed. Ready for warehouse receipt.");
+          } catch (err) {
+            console.error(err);
+            alert("Error closing pickup");
+          } finally {
+            setSaving(false);
+          }
+        };
+
+        // Mark warehouse receipt
+        const handleWarehouseReceipt = async (shipmentId) => {
+          setSaving(true);
+          try {
+            const res = await fetch(`${API_URL}/shipments/admin/warehouse-receipt/${shipmentId}/`, {
+              method: "PATCH",
+              headers: { Authorization: `Bearer ${token}` },
+            });
+            if (!res.ok) throw new Error("Failed to mark warehouse receipt");
+            const updated = await res.json();
+            setPickups((prev) => prev.map((p) => (p.id === shipmentId ? updated : p)));
+            alert("Cargo marked as received at warehouse.");
+          } catch (err) {
+            console.error(err);
+            alert("Error marking warehouse receipt");
+          } finally {
+            setSaving(false);
+          }
+        };
         body: JSON.stringify({
           dispatcher_name: dispatchData[shipmentId].dispatcher_name,
           dispatcher_service: dispatchData[shipmentId].dispatcher_service,
@@ -95,49 +145,51 @@ export default function PickupRequestsPanel({ token }) {
               <div className="flex justify-between items-start">
                 <div>
                   <p className="font-medium">
-                    <FaUser className="inline mr-2" /> {shipment.client_name}
+                    <FaUser className="inline mr-2" /> {shipment.client_name || shipment.client?.first_name || shipment.client?.username || "Me"}
                   </p>
                   <p className="text-sm text-gray-600">
-                    <FaMapMarkerAlt className="inline mr-1" /> {shipment.origin} → {shipment.destination}
+                    <FaMapMarkerAlt className="inline mr-1" /> {shipment.origin?.name || shipment.origin} → {shipment.destination?.name || shipment.destination}
                   </p>
                   <p className="text-sm text-gray-600">
-                    <FaCalendarAlt className="inline mr-1" /> Requested:{" "}
-                    {new Date(shipment.pickup_requested_at).toLocaleString()}
+                    <FaCalendarAlt className="inline mr-1" /> Requested: {" "}
+                    {shipment.pickup_requested_at ? new Date(shipment.pickup_requested_at).toLocaleString() : "—"}
                   </p>
                 </div>
-                <div className="ml-4">
-                  {shipment.dispatcher_name ? (
-                    <p className="text-green-600 text-sm">
-                      <FaTruck className="inline mr-1" />
-                      {shipment.dispatcher_name} ({shipment.dispatcher_service}) –{" "}
-                      {new Date(shipment.dispatched_datetime).toLocaleString()}
-                    </p>
-                  ) : (
-                    <div className="space-y-1">
-                      <input
-                        type="text"
-                        placeholder="Dispatcher Name"
-                        className="border px-2 py-1 rounded w-full text-sm"
-                        value={dispatchData[shipment.id]?.dispatcher_name || ""}
-                        onChange={(e) => handleInputChange(shipment.id, "dispatcher_name", e.target.value)}
-                      />
-                      <input
-                        type="text"
-                        placeholder="Service (Motorcycle/Wells/Ntl)"
-                        className="border px-2 py-1 rounded w-full text-sm"
-                        value={dispatchData[shipment.id]?.dispatcher_service || ""}
-                        onChange={(e) => handleInputChange(shipment.id, "dispatcher_service", e.target.value)}
-                      />
-                      <button
-                        onClick={() => handleDispatchSave(shipment.id)}
-                        disabled={saving}
-                        className="bg-blue-500 text-white px-3 py-1 rounded text-sm hover:bg-blue-600"
-                      >
-                        <FaSave className="inline mr-1" /> Save
-                      </button>
-                    </div>
-                  )}
-                </div>
+                {!clientView && (
+                  <div className="ml-4">
+                    {shipment.dispatcher_name ? (
+                      <p className="text-green-600 text-sm">
+                        <FaTruck className="inline mr-1" />
+                        {shipment.dispatcher_name} ({shipment.dispatcher_service}) –{" "}
+                        {new Date(shipment.dispatched_datetime).toLocaleString()}
+                      </p>
+                    ) : (
+                      <div className="space-y-1">
+                         <input
+                           type="text"
+                           placeholder="Assignee Name (Staff or 3rd Party)"
+                           className="border px-2 py-1 rounded w-full text-sm"
+                           value={dispatchData[shipment.id]?.dispatcher_name || ""}
+                           onChange={(e) => handleInputChange(shipment.id, "dispatcher_name", e.target.value)}
+                         />
+                         <input
+                           type="text"
+                           placeholder="Service/Company (optional)"
+                           className="border px-2 py-1 rounded w-full text-sm"
+                           value={dispatchData[shipment.id]?.dispatcher_service || ""}
+                           onChange={(e) => handleInputChange(shipment.id, "dispatcher_service", e.target.value)}
+                         />
+                        <button
+                          onClick={() => handleDispatchSave(shipment.id)}
+                          disabled={saving}
+                          className="bg-blue-500 text-white px-3 py-1 rounded text-sm hover:bg-blue-600"
+                        >
+                          <FaSave className="inline mr-1" /> Save
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
           ))}

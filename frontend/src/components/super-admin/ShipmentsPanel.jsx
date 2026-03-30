@@ -101,6 +101,8 @@ export default function ShipmentsPanel() {
       [inv.id]: {
         customs_duty: inv.customs_duty || "",
         excise_duty: inv.excise_duty || "",
+        import_vat: inv.import_vat || "",
+        reimbursable_vat: inv.reimbursable_vat || "",
         rdl: inv.rdl || "",
         idf: inv.idf || "",
         clearance_fee: inv.clearance_fee || "",
@@ -333,6 +335,18 @@ export default function ShipmentsPanel() {
                               {inv.currency} {Number(inv.excise_duty).toFixed(2)}
                             </div>
                           )}
+                          {(Number(inv.import_vat) > 0 || inv.invoice_type === "final") && (
+                            <div>
+                              <span className="text-gray-500">Import VAT (Firm-Paid):</span>{" "}
+                              {inv.currency} {Number(inv.import_vat).toFixed(2)}
+                            </div>
+                          )}
+                          {(Number(inv.reimbursable_vat) > 0 || inv.invoice_type === "final") && (
+                            <div>
+                              <span className="text-gray-500">Reimbursable VAT:</span>{" "}
+                              {inv.currency} {Number(inv.reimbursable_vat).toFixed(2)}
+                            </div>
+                          )}
                           {(Number(inv.rdl) > 0 || inv.invoice_type === "final") && (
                             <div>
                               <span className="text-gray-500">RDL:</span>{" "}
@@ -444,6 +458,8 @@ export default function ShipmentsPanel() {
                                   {[
                                     { key: "customs_duty", label: "Customs Duty" },
                                     { key: "excise_duty", label: "Excise Duty" },
+                                    { key: "import_vat", label: "Import VAT (Firm-Paid)" },
+                                    { key: "reimbursable_vat", label: "Reimbursable VAT" },
                                     { key: "rdl", label: "RDL" },
                                     { key: "idf", label: "IDF" },
                                     { key: "clearance_fee", label: "Clearance Fee" },

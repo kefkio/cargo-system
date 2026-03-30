@@ -1,44 +1,46 @@
 // src/components/super-admin/DispatchPanel.jsx
 import React, { useEffect, useState, useMemo, useCallback } from "react";
 
+// ✅ All badge styles in one place — no inline classes scattered in JSX
 const STATUS_BADGE = {
-  "Arrived Nairobi Hub": "bg-teal-900/40 text-teal-300 border-teal-700/30",
-  "Dispatched":          "bg-orange-900/40 text-orange-300 border-orange-700/30",
-  "Delivered":           "bg-green-900/40 text-green-300 border-green-700/30",
+  "Arrived Nairobi Hub": "badge-teal",
+  "Dispatched":          "badge-orange",
+  "Delivered":           "badge-green",
 };
+
+const TAB_CONFIG = [
+  { key: "ready",      label: "Ready for Dispatch", color: "text-teal-400"   },
+  { key: "dispatched", label: "Dispatched",          color: "text-orange-400" },
+  { key: "delivered",  label: "Delivered",           color: "text-green-400"  },
+];
 
 export default function DispatchPanel({ search = "" }) {
   const [shipments, setShipments] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [tab, setTab] = useState("ready"); // ready | dispatched | delivered
+  const [loading, setLoading]     = useState(true);
+  const [error, setError]         = useState(null);
+  const [tab, setTab]             = useState("ready");
 
   const API_URL = import.meta.env.VITE_API_URL.replace(/\/accounts\/?$/, "");
-  const token = localStorage.getItem("access");
+  const token   = localStorage.getItem("access");
 
   const fetchData = useCallback(async () => {
     try {
       setLoading(true);
-      const res = await fetch(`${API_URL}/shipments/admin/pipeline/`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (!res.ok) throw new Error("Failed to fetch pipeline shipments");
-      const pipeline = await res.json();
+      const [pipelineRes, recentRes] = await Promise.all([
+        fetch(`${API_URL}/shipments/admin/pipeline/`,         { headers: { Authorization: `Bearer ${token}` } }),
+        fetch(`${API_URL}/shipments/admin/recent-shipments/`, { headers: { Authorization: `Bearer ${token}` } }),
+      ]);
 
-      // Also fetch recent shipments to include delivered ones
-      const recentRes = await fetch(`${API_URL}/shipments/admin/recent-shipments/`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      let recent = [];
-      if (recentRes.ok) {
-        recent = await recentRes.json();
-      }
+      if (!pipelineRes.ok) throw new Error("Failed to fetch pipeline shipments");
 
-      // Merge: pipeline has active, recent may have delivered
+      const pipeline  = await pipelineRes.json();
+      const recent    = recentRes.ok ? await recentRes.json() : [];
+
       const pipelineArr = Array.isArray(pipeline) ? pipeline : pipeline.results || [];
-      const recentArr = Array.isArray(recent) ? recent : recent.results || [];
-      const ids = new Set(pipelineArr.map((s) => s.id));
-      const delivered = recentArr.filter((s) => s.status === "Delivered" && !ids.has(s.id));
+      const recentArr   = Array.isArray(recent)   ? recent   : recent.results   || [];
+      const ids         = new Set(pipelineArr.map((s) => s.id));
+      const delivered   = recentArr.filter((s) => s.status === "Delivered" && !ids.has(s.id));
+
       setShipments([...pipelineArr, ...delivered]);
     } catch (err) {
       setError(err.message);
@@ -47,178 +49,164 @@ export default function DispatchPanel({ search = "" }) {
     }
   }, [API_URL, token]);
 
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+  useEffect(() => { fetchData(); }, [fetchData]);
 
-  const ready = useMemo(
-    () => shipments.filter((s) => s.status === "Arrived Nairobi Hub"),
-    [shipments]
-  );
-  const dispatched = useMemo(
-    () => shipments.filter((s) => s.status === "Dispatched"),
-    [shipments]
-  );
-  const delivered = useMemo(
-    () => shipments.filter((s) => s.status === "Delivered"),
+  const ready      = useMemo(() => shipments.filter((s) => s.status === "Arrived Nairobi Hub"), [shipments]);
+  const dispatched = useMemo(() => shipments.filter((s) => s.status === "Dispatched"),          [shipments]);
+  const delivered  = useMemo(() => shipments.filter((s) => s.status === "Delivered"),           [shipments]);
+
+  const totalDispatchCost = useMemo(() =>
+    shipments
+      .filter((s) => s.status === "Dispatched" || s.status === "Delivered")
+      .reduce((sum, s) => sum + parseFloat(s.dispatch_cost || 0), 0),
     [shipments]
   );
 
-  const totalDispatchCost = useMemo(
-    () =>
-      shipments
-        .filter((s) => s.status === "Dispatched" || s.status === "Delivered")
-        .reduce((sum, s) => sum + parseFloat(s.dispatch_cost || 0), 0),
-    [shipments]
-  );
-
-  const activeList =
-    tab === "ready" ? ready : tab === "dispatched" ? dispatched : delivered;
+  const listMap   = { ready, dispatched, delivered };
+  const activeList = listMap[tab] || [];
 
   const filtered = useMemo(() => {
     if (!search.trim()) return activeList;
     const q = search.toLowerCase();
-    return activeList.filter(
-      (s) =>
-        (s.tracking_number || "").toLowerCase().includes(q) ||
-        (s.client_name || "").toLowerCase().includes(q) ||
-        (s.dest_contact_person || "").toLowerCase().includes(q) ||
-        (s.dispatcher_name || "").toLowerCase().includes(q) ||
-        (s.dispatcher_phone || "").toLowerCase().includes(q) ||
-        (s.dispatcher_service || "").toLowerCase().includes(q)
+    return activeList.filter((s) =>
+      [s.tracking_number, s.client_name, s.dest_contact_person,
+       s.dispatcher_name, s.dispatcher_phone, s.dispatcher_service]
+        .some((val) => (val || "").toLowerCase().includes(q))
     );
   }, [activeList, search]);
 
-  if (loading)
-    return <p className="text-[#7a8499] py-4">Loading dispatch data...</p>;
-  if (error) return <p className="text-red-400 py-4">{error}</p>;
+  // ─── Empty state message ────────────────────────────────────────────────────
+  const emptyMessage = search
+    ? "No shipments match your search."
+    : { ready: "No shipments awaiting dispatch.",
+        dispatched: "No dispatched shipments in pipeline.",
+        delivered:  "No delivered shipments found." }[tab];
+
+  if (loading) return <p className="dispatch-loading">Loading dispatch data...</p>;
+  if (error)   return <p className="dispatch-error">{error}</p>;
 
   return (
-    <div>
-      {/* Summary */}
-      <div className="grid grid-cols-4 gap-3 mb-4">
-        {[
-          { key: "ready", label: "Ready for Dispatch", count: ready.length, color: "text-teal-400" },
-          { key: "dispatched", label: "Dispatched", count: dispatched.length, color: "text-orange-400" },
-          { key: "delivered", label: "Delivered", count: delivered.length, color: "text-green-400" },
-        ].map((item) => (
+    <div className="dispatch-panel">
+
+      {/* ── Summary Tabs ───────────────────────────────────────────────────── */}
+      <div className="dispatch-summary-grid">
+        {TAB_CONFIG.map(({ key, label, color }) => (
           <button
-            key={item.key}
-            onClick={() => setTab(item.key)}
-            className={`rounded-lg p-3 text-center border transition ${
-              tab === item.key
-                ? "bg-[#e8ff47]/10 border-[#e8ff47]/40"
-                : "bg-[#0d0f14] border-[#2a3045] hover:border-[#3a4055]"
-            }`}
+            key={key}
+            onClick={() => setTab(key)}
+            className={`dispatch-tab ${tab === key ? "dispatch-tab--active" : ""}`}
           >
-            <p className={`text-xl font-bold ${item.color}`}>{item.count}</p>
-            <p className="text-[10px] text-[#7a8499] mt-0.5">{item.label}</p>
+            <p className={`dispatch-tab-count ${color}`}>
+              {listMap[key].length}
+            </p>
+            <p className="dispatch-tab-label">{label}</p>
           </button>
         ))}
-        <div className="rounded-lg p-3 text-center border bg-[#0d0f14] border-[#2a3045]">
-          <p className="text-xl font-bold text-[#e8ff47]">
-            KES {totalDispatchCost.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+
+        {/* Cost Card */}
+        <div className="dispatch-cost-card">
+          <p className="dispatch-cost-value">
+            KES {totalDispatchCost.toLocaleString(undefined, {
+              minimumFractionDigits: 0,
+              maximumFractionDigits: 0,
+            })}
           </p>
-          <p className="text-[10px] text-[#7a8499] mt-0.5">Total Dispatch Costs</p>
+          <p className="dispatch-tab-label">Total Dispatch Costs</p>
         </div>
       </div>
 
-      {/* List */}
+      {/* ── Shipment List ──────────────────────────────────────────────────── */}
       {filtered.length === 0 ? (
-        <p className="text-[#7a8499] text-sm italic py-6 text-center">
-          {search
-            ? "No shipments match your search."
-            : tab === "ready"
-            ? "No shipments awaiting dispatch."
-            : tab === "dispatched"
-            ? "No dispatched shipments in pipeline."
-            : "No delivered shipments found."}
-        </p>
+        <p className="dispatch-empty">{emptyMessage}</p>
       ) : (
-        <div className="space-y-2">
-          {filtered.map((s) => {
-            const badge = STATUS_BADGE[s.status] || "bg-[#2a3045] text-[#7a8499]";
-            return (
-              <div
-                key={s.id}
-                className="bg-[#0d0f14] border border-[#2a3045] rounded-lg p-3 hover:border-[#3a4055] transition"
-              >
-                <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                  {/* Status */}
-                  <span className={`inline-block self-start px-2.5 py-0.5 text-[10px] font-semibold rounded border ${badge}`}>
-                    {s.status}
-                  </span>
-
-                  {/* Tracking & client */}
-                  <div className="flex-1 min-w-0">
-                    <div className="flex flex-wrap items-center gap-x-4 gap-y-0.5">
-                      <span className="text-sm font-semibold text-[#f0f2f8]">
-                        {s.tracking_number}
-                      </span>
-                      {s.client_name && (
-                        <span className="text-xs text-[#7a8499]">
-                          Client: {s.client_name}
-                        </span>
-                      )}
-                      {s.weight_kg && (
-                        <span className="text-xs text-[#7a8499]">
-                          {s.weight_kg}kg
-                        </span>
-                      )}
-                      {s.transport_mode && (
-                        <span className="text-xs text-[#7a8499]">
-                          {s.transport_mode === "Air" ? "✈️" : "🚢"} {s.transport_mode}
-                        </span>
-                      )}
-                    </div>
-
-                    {/* Delivery contact */}
-                    {s.dest_contact_person && (
-                      <p className="text-xs text-[#555b6e] mt-0.5">
-                        📍 {s.dest_contact_person}
-                        {s.dest_contact_phone && ` — ${s.dest_contact_phone}`}
-                        {s.destination_name && ` · ${s.destination_name}`}
-                      </p>
-                    )}
-
-                    {/* Dispatcher info */}
-                    {s.dispatcher_name && (
-                      <p className="text-xs mt-0.5">
-                        <span className="text-orange-400 font-medium">
-                          🚚 {s.dispatcher_service}
-                        </span>
-                        <span className="text-[#7a8499]"> — {s.dispatcher_name}</span>
-                        {s.dispatcher_phone && (
-                          <span className="text-[#7a8499]"> · 📞 {s.dispatcher_phone}</span>
-                        )}
-                        {parseFloat(s.dispatch_cost || 0) > 0 && (
-                          <span className="text-[#e8ff47] ml-2 font-medium">
-                            · KES {parseFloat(s.dispatch_cost).toLocaleString()}
-                          </span>
-                        )}
-                      </p>
-                    )}
-
-                    {/* Timestamps */}
-                    <div className="flex flex-wrap gap-x-4 gap-y-0.5 mt-0.5">
-                      {s.dispatched_datetime && (
-                        <span className="text-[10px] text-[#555b6e]">
-                          Dispatched: {new Date(s.dispatched_datetime).toLocaleString()}
-                        </span>
-                      )}
-                      {s.delivered_datetime && (
-                        <span className="text-[10px] text-[#555b6e]">
-                          Delivered: {new Date(s.delivered_datetime).toLocaleString()}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
+        <div className="dispatch-list">
+          {filtered.map((s) => (
+            <ShipmentCard key={s.id} shipment={s} />
+          ))}
         </div>
       )}
     </div>
+  );
+}
+
+// ✅ Extracted into its own component — cleaner JSX, easier to maintain
+function ShipmentCard({ shipment: s }) {
+  const badgeClass = STATUS_BADGE[s.status] || "badge-default";
+  const dispatchCost = parseFloat(s.dispatch_cost || 0);
+
+  return (
+    <div className="shipment-card">
+      <div className="shipment-card-inner">
+
+        {/* Status Badge */}
+        <span className={`status-badge ${badgeClass}`}>{s.status}</span>
+
+        {/* Main Info */}
+        <div className="shipment-info">
+
+          {/* Row 1: Tracking + meta */}
+          <div className="shipment-meta-row">
+            <span className="shipment-tracking">{s.tracking_number}</span>
+            {s.client_name    && <MetaTag label="Client" value={s.client_name} />}
+            {s.weight_kg      && <MetaTag value={`${s.weight_kg}kg`} />}
+            {s.transport_mode && (
+              <MetaTag value={`${s.transport_mode === "Air" ? "✈️" : "🚢"} ${s.transport_mode}`} />
+            )}
+          </div>
+
+          {/* Row 2: Delivery contact */}
+          {s.dest_contact_person && (
+            <p className="shipment-contact">
+              📍 {s.dest_contact_person}
+              {s.dest_contact_phone && ` — ${s.dest_contact_phone}`}
+              {s.destination_name   && ` · ${s.destination_name}`}
+            </p>
+          )}
+
+          {/* Row 3: Dispatcher */}
+          {s.dispatcher_name && (
+            <p className="shipment-dispatcher">
+              <span className="dispatcher-service">🚚 {s.dispatcher_service}</span>
+              <span className="dispatcher-meta"> — {s.dispatcher_name}</span>
+              {s.dispatcher_phone && (
+                <span className="dispatcher-meta"> · 📞 {s.dispatcher_phone}</span>
+              )}
+              {dispatchCost > 0 && (
+                <span className="dispatcher-cost">
+                  {" "}· KES {dispatchCost.toLocaleString()}
+                </span>
+              )}
+            </p>
+          )}
+
+          {/* Row 4: Timestamps */}
+          <div className="shipment-timestamps">
+            {s.dispatched_datetime && (
+              <TimeStamp label="Dispatched" value={s.dispatched_datetime} />
+            )}
+            {s.delivered_datetime && (
+              <TimeStamp label="Delivered" value={s.delivered_datetime} />
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Small reusable helpers ────────────────────────────────────────────────────
+function MetaTag({ label, value }) {
+  return (
+    <span className="meta-tag">
+      {label ? `${label}: ${value}` : value}
+    </span>
+  );
+}
+
+function TimeStamp({ label, value }) {
+  return (
+    <span className="timestamp">
+      {label}: {new Date(value).toLocaleString()}
+    </span>
   );
 }

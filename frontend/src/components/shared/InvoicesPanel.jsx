@@ -1,7 +1,8 @@
 // src/components/shared/InvoicesPanel.jsx
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import PrintableInvoice from "./PrintableInvoice";
+import InvoicesReportModal from "./InvoicesReportModal";
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 
@@ -101,6 +102,7 @@ export default function InvoicesPanel({ role = ROLES.CLIENT, theme = "light", se
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
   const [printInvoice, setPrintInvoice] = useState(null);
+  const [reportModal, setReportModal] = useState({ open: false, title: "", filter: null });
 
   const BASE_URL = import.meta.env.VITE_BASE_URL
     ?? import.meta.env.VITE_API_URL?.replace(/\/accounts\/?$/, "");
@@ -259,24 +261,52 @@ export default function InvoicesPanel({ role = ROLES.CLIENT, theme = "light", se
     <div className="space-y-4">
       {/* Summary Stats */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-        {[
-          { label: "Proformas",       value: stats.totalProforma,    color: isDark ? "text-amber-400"   : "text-amber-600" },
-          { label: "Final Invoices",  value: stats.totalFinal,       color: isDark ? "text-emerald-400" : "text-emerald-600" },
-          { label: "Paid",            value: stats.totalPaid,        color: isDark ? "text-green-400"   : "text-green-600" },
-          { label: "Outstanding",     value: stats.totalOutstanding, color: isDark ? "text-orange-400"  : "text-orange-600" },
-          {
-            label: "Unpaid", value: stats.totalUnpaid,
-            color: isDark ? "text-red-400" : "text-red-600",
-            sub: stats.totalUnpaidAmount > 0 ? `${stats.currency} ${stats.totalUnpaidAmount.toFixed(2)}` : null,
-          },
-        ].map(({ label, value, color, sub }) => (
-          <div key={label} className={`${t.bg} border ${t.border} rounded-lg p-3 text-center`}>
-            <p className={`text-2xl font-bold ${color}`}>{value}</p>
-            <p className={`text-xs ${t.textMuted}`}>{label}</p>
-            {sub && <p className={`text-xs font-semibold mt-0.5 ${color}`}>{sub}</p>}
-          </div>
-        ))}
+        <button
+          className={`${t.bg} border ${t.border} rounded-lg p-3 text-center w-full hover:bg-amber-50 focus:outline-none`}
+          onClick={() => setReportModal({ open: true, title: "Proforma Invoices", filter: (i) => i.invoice_type === 'proforma' })}
+        >
+          <p className={`text-2xl font-bold ${isDark ? "text-amber-400" : "text-amber-600"}`}>{stats.totalProforma}</p>
+          <p className={`text-xs ${t.textMuted}`}>Proformas</p>
+        </button>
+        <button
+          className={`${t.bg} border ${t.border} rounded-lg p-3 text-center w-full hover:bg-emerald-50 focus:outline-none`}
+          onClick={() => setReportModal({ open: true, title: "Final Invoices", filter: (i) => i.invoice_type === 'final' })}
+        >
+          <p className={`text-2xl font-bold ${isDark ? "text-emerald-400" : "text-emerald-600"}`}>{stats.totalFinal}</p>
+          <p className={`text-xs ${t.textMuted}`}>Final Invoices</p>
+        </button>
+        <button
+          className={`${t.bg} border ${t.border} rounded-lg p-3 text-center w-full hover:bg-green-50 focus:outline-none`}
+          onClick={() => setReportModal({ open: true, title: "Paid Invoices", filter: (i) => i.status === 'paid' })}
+        >
+          <p className={`text-2xl font-bold ${isDark ? "text-green-400" : "text-green-600"}`}>{stats.totalPaid}</p>
+          <p className={`text-xs ${t.textMuted}`}>Paid</p>
+        </button>
+        <button
+          className={`${t.bg} border ${t.border} rounded-lg p-3 text-center w-full hover:bg-orange-50 focus:outline-none`}
+          onClick={() => setReportModal({ open: true, title: "Outstanding Invoices", filter: (i) => i.status === 'issued' })}
+        >
+          <p className={`text-2xl font-bold ${isDark ? "text-orange-400" : "text-orange-600"}`}>{stats.totalOutstanding}</p>
+          <p className={`text-xs ${t.textMuted}`}>Outstanding</p>
+        </button>
+        <button
+          className={`${t.bg} border ${t.border} rounded-lg p-3 text-center w-full hover:bg-red-50 focus:outline-none`}
+          onClick={() => setReportModal({ open: true, title: "Unpaid Invoices", filter: (i) => i.payment_status === 'unpaid' })}
+        >
+          <p className={`text-2xl font-bold ${isDark ? "text-red-400" : "text-red-600"}`}>{stats.totalUnpaid}</p>
+          <p className={`text-xs ${t.textMuted}`}>Unpaid</p>
+          {stats.totalUnpaidAmount > 0 && <p className={`text-xs font-semibold mt-0.5 ${isDark ? "text-red-400" : "text-red-600"}`}>{`${stats.currency} ${stats.totalUnpaidAmount.toFixed(2)}`}</p>}
+        </button>
       </div>
+      {/* Invoices Report Modal */}
+      {reportModal.open && (
+        <InvoicesReportModal
+          title={reportModal.title}
+          invoices={invoices}
+          filter={reportModal.filter}
+          onClose={() => setReportModal({ open: false, title: "", filter: null })}
+        />
+      )}
 
       {/* Filters */}
       <div className="space-y-2">
@@ -510,6 +540,18 @@ function InvoiceCard({ invoice: inv, showClient, isDark, cardBg, border, text, t
               <div className="flex justify-between">
                 <span className={textMuted}>Excise Duty</span>
                 <span className={text}>{inv.currency} {Number(inv.excise_duty).toFixed(2)}</span>
+              </div>
+            )}
+            {(Number(inv.import_vat) > 0 || inv.invoice_type === "final") && (
+              <div className="flex justify-between">
+                <span className={textMuted}>Import VAT (Firm-Paid)</span>
+                <span className={text}>{inv.currency} {Number(inv.import_vat).toFixed(2)}</span>
+              </div>
+            )}
+            {(Number(inv.reimbursable_vat) > 0 || inv.invoice_type === "final") && (
+              <div className="flex justify-between">
+                <span className={textMuted}>Reimbursable VAT</span>
+                <span className={text}>{inv.currency} {Number(inv.reimbursable_vat).toFixed(2)}</span>
               </div>
             )}
             {(Number(inv.rdl) > 0 || inv.invoice_type === "final") && (
@@ -760,6 +802,8 @@ function InvoiceCard({ invoice: inv, showClient, isDark, cardBg, border, text, t
                   onClick={() => setClearanceForm({
                     customs_duty: inv.customs_duty || "",
                     excise_duty: inv.excise_duty || "",
+                    import_vat: inv.import_vat || "",
+                    reimbursable_vat: inv.reimbursable_vat || "",
                     rdl: inv.rdl || "",
                     idf: inv.idf || "",
                     clearance_fee: inv.clearance_fee || "",
@@ -778,6 +822,8 @@ function InvoiceCard({ invoice: inv, showClient, isDark, cardBg, border, text, t
                     {[
                       { key: "customs_duty", label: "Customs Duty" },
                       { key: "excise_duty", label: "Excise Duty" },
+                      { key: "import_vat", label: "Import VAT (Firm-Paid)" },
+                      { key: "reimbursable_vat", label: "Reimbursable VAT" },
                       { key: "rdl", label: "RDL" },
                       { key: "idf", label: "IDF" },
                       { key: "clearance_fee", label: "Clearance Fee" },

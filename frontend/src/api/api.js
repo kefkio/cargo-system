@@ -1,3 +1,17 @@
+/* ---------------- CREATE SUPERADMIN (ADMIN ONLY) ---------------- */
+export async function createSuperAdmin({ first_name, last_name, email, phone_number, password, confirm_password }) {
+  return await apiRequest("/create-superadmin/", {
+    method: "POST",
+    body: JSON.stringify({
+      first_name,
+      last_name,
+      email,
+      phone_number,
+      password,
+      confirm_password
+    })
+  });
+}
 import { apiRequest } from "./client";
 
 /* ---------------- LOGIN ---------------- */

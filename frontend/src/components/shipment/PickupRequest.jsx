@@ -20,13 +20,20 @@ const US_STATES = [
 
 const STEPS = ["Contact", "Address", "Package"];
 
-export default function PickupRequest({ onClose }) {
+
+export default function PickupRequest({ onClose, profile }) {
   const navigate = useNavigate();
   const [step, setStep] = useState(0);
   const [form, setForm] = useState({
-    name: "", email: "", phone: "",
-    street: "", city: "", state: "", zip: "",
-    contactPerson: "", contactPhone: "",
+    name: profile?.first_name && profile?.last_name ? `${profile.first_name} ${profile.last_name}` : (profile?.first_name || profile?.username || ""),
+    email: profile?.email || "",
+    phone: profile?.phone_number || "",
+    street: profile?.address_street || "",
+    city: profile?.address_city || "",
+    state: profile?.address_state || "",
+    zip: profile?.address_zip || "",
+    contactPerson: profile?.first_name && profile?.last_name ? `${profile.first_name} ${profile.last_name}` : (profile?.first_name || profile?.username || ""),
+    contactPhone: profile?.phone_number || "",
     packageDetails: "",
   });
   const [submitted, setSubmitted] = useState(false);
@@ -39,6 +46,22 @@ export default function PickupRequest({ onClose }) {
     document.body.style.overflow = "hidden";
     return () => { document.body.style.overflow = ""; };
   }, []);
+
+  // If profile changes (e.g. after login), update form fields
+  useEffect(() => {
+    setForm((prev) => ({
+      ...prev,
+      name: profile?.first_name && profile?.last_name ? `${profile.first_name} ${profile.last_name}` : (profile?.first_name || profile?.username || prev.name),
+      email: profile?.email || prev.email,
+      phone: profile?.phone_number || prev.phone,
+      street: profile?.address_street || prev.street,
+      city: profile?.address_city || prev.city,
+      state: profile?.address_state || prev.state,
+      zip: profile?.address_zip || prev.zip,
+      contactPerson: profile?.first_name && profile?.last_name ? `${profile.first_name} ${profile.last_name}` : (profile?.first_name || profile?.username || prev.contactPerson),
+      contactPhone: profile?.phone_number || prev.contactPhone,
+    }));
+  }, [profile]);
 
   const handleClose = () => {
     setVisible(false);

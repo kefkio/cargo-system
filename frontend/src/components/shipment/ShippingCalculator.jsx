@@ -1,7 +1,4 @@
-import { useState, useEffect, useRef } from "react";
-
-// ─── Google Font import (Syne + DM Sans) ─────────────────────────────────────
-const FONT_LINK = "https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500;600&display=swap";
+import { useState, useRef } from "react";
 
 const RATES = {
   air: { perKg: 16.99, min: 1 },
@@ -50,17 +47,6 @@ export default function ShippingCalculator() {
   const [revealed, setRevealed] = useState(false);
   const [shake, setShake] = useState(false);
 
-  useEffect(() => {
-    // inject font
-    if (!document.getElementById("sc-font")) {
-      const link = document.createElement("link");
-      link.id = "sc-font";
-      link.rel = "stylesheet";
-      link.href = FONT_LINK;
-      document.head.appendChild(link);
-    }
-  }, []);
-
   const handleModeSwitch = (m) => {
     setMode(m);
     setCost(null);
@@ -101,43 +87,37 @@ export default function ShippingCalculator() {
   };
 
   const inputCls = `
-    w-full bg-slate-800/60 border border-slate-700 rounded-xl px-4 py-3
-    text-white text-sm font-medium placeholder-slate-500 outline-none
+    w-full bg-white border border-gray-300 rounded-xl px-4 py-3
+    text-gray-900 text-sm font-medium placeholder-gray-400 outline-none
     transition-all duration-200
-    focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 focus:bg-slate-800
+    focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20
   `;
-  const labelCls = "block text-xs font-semibold text-slate-400 mb-1.5 tracking-wide uppercase";
+  const labelCls = "block text-xs font-semibold text-gray-500 mb-1.5 tracking-wide uppercase";
 
   return (
-    <div className="font-dm-sans">
+    <div className="font-outfit">
       <div
-        className={`relative w-full max-w-lg mx-auto rounded-3xl overflow-hidden shadow-2xl calc-container-bg ${shake ? "sc-shake" : ""}`}
+        className={`relative w-full max-w-lg mx-auto rounded-2xl overflow-hidden shadow-sm border border-gray-200 bg-white ${shake ? "sc-shake" : ""}`}
       >
-        {/* Decorative top glow */}
-        <div
-          className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-32 pointer-events-none calc-top-glow"
-          aria-hidden="true"
-        />
-
         {/* Header */}
         <div className="relative px-6 pt-8 pb-5 text-center">
-          <div className="inline-flex items-center gap-2 bg-amber-400/10 border border-amber-400/20 rounded-full px-3 py-1 mb-3">
-            <span className="w-1.5 h-1.5 rounded-full bg-amber-400 sc-pulse inline-block" />
-            <span className="text-amber-400 text-xs font-semibold tracking-widest uppercase">Instant Estimate</span>
+          <div className="inline-flex items-center gap-2 bg-blue-50 border border-blue-100 rounded-full px-3 py-1 mb-3">
+            <span className="w-1.5 h-1.5 rounded-full bg-blue-600 sc-pulse inline-block" />
+            <span className="text-blue-700 text-xs font-semibold tracking-widest uppercase">Instant Estimate</span>
           </div>
           <h2
-            className="text-2xl font-extrabold text-white leading-tight font-syne"
+            className="text-2xl font-bold text-gray-900 leading-tight"
           >
             Shipping Cost Calculator
           </h2>
-          <p className="text-slate-400 text-sm mt-1.5">
+          <p className="text-gray-500 text-sm mt-1.5">
             Air freight by weight · Sea cargo by volume
           </p>
         </div>
 
         {/* Mode toggle */}
         <div className="px-6 mb-5">
-          <div className="relative flex bg-slate-800/70 rounded-2xl p-1 border border-slate-700/60">
+          <div className="relative flex bg-gray-100 rounded-2xl p-1 border border-gray-200">
             <div
               className="absolute top-1 bottom-1 w-1/2 rounded-xl transition-all duration-300 ease-out calc-mode-indicator"
               style={{ left: mode === "air" ? "4px" : "calc(50% - 4px)" }}
@@ -152,7 +132,7 @@ export default function ShippingCalculator() {
                 type="button"
                 onClick={() => handleModeSwitch(val)}
                 className={`relative z-10 flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold transition-colors duration-200
-                  ${mode === val ? "text-slate-900" : "text-slate-400 hover:text-slate-200"}`}
+                  ${mode === val ? "text-white" : "text-gray-600 hover:text-gray-800"}`}
                 aria-pressed={mode === val}
               >
                 <span>{icon}</span> {label}
@@ -178,8 +158,8 @@ export default function ShippingCalculator() {
                 className={inputCls}
                 aria-label="Package weight in kilograms"
               />
-              <p className="text-xs text-slate-500 mt-1.5">
-                Rate: <span className="text-amber-400 font-semibold">$16.99 / kg</span> · Min charge 1 kg
+              <p className="text-xs text-gray-500 mt-1.5">
+                Rate: <span className="text-blue-700 font-semibold">$16.99 / kg</span> · Min charge 1 kg
               </p>
             </div>
           )}
@@ -191,7 +171,7 @@ export default function ShippingCalculator() {
                 <div className="grid grid-cols-3 gap-2">
                   {["length", "width", "height"].map((dim) => (
                     <div key={dim}>
-                      <label htmlFor={`sc-${dim}`} className="block text-xs text-slate-500 mb-1 capitalize">{dim}</label>
+                      <label htmlFor={`sc-${dim}`} className="block text-xs text-gray-500 mb-1 capitalize">{dim}</label>
                       <input
                         id={`sc-${dim}`}
                         type="number"
@@ -222,9 +202,9 @@ export default function ShippingCalculator() {
                   ))}
                 </select>
               </div>
-              <div className="text-xs text-slate-500 flex gap-4">
-                <span>≤ 100 ft³ → <span className="text-amber-400 font-semibold">$30 / ft³</span></span>
-                <span>&gt; 100 ft³ → <span className="text-amber-400 font-semibold">$25 / ft³</span></span>
+              <div className="text-xs text-gray-500 flex gap-4">
+                <span>≤ 100 ft³ → <span className="text-blue-700 font-semibold">$30 / ft³</span></span>
+                <span>&gt; 100 ft³ → <span className="text-blue-700 font-semibold">$25 / ft³</span></span>
               </div>
             </div>
           )}

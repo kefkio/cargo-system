@@ -19,6 +19,8 @@ import PrintableInvoice from "../shared/PrintableInvoice";
 const TAX_FIELDS = [
   { key: "customs_duty", label: "Customs Duty" },
   { key: "excise_duty", label: "Excise Duty" },
+  { key: "import_vat", label: "Import VAT (Firm-Paid)" },
+  { key: "reimbursable_vat", label: "Reimbursable VAT" },
   { key: "rdl", label: "RDL (Railway Development Levy)" },
   { key: "idf", label: "IDF (Import Declaration Fee)" },
   { key: "clearance_fee", label: "Clearance Fee" },
@@ -124,6 +126,8 @@ export default function StaffInvoicing() {
     setClearanceForm({
       customs_duty: inv.customs_duty || "",
       excise_duty: inv.excise_duty || "",
+      import_vat: inv.import_vat || "",
+      reimbursable_vat: inv.reimbursable_vat || "",
       rdl: inv.rdl || "",
       idf: inv.idf || "",
       clearance_fee: inv.clearance_fee || "",

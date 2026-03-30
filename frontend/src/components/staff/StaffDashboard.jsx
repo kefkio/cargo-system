@@ -1,5 +1,29 @@
+// Tips for each pipeline status
+const PIPELINE_TIPS = {
+  "Shipment Created": {
+    tip: "Verify shipment details and prepare for processing at origin.",
+    nextActor: "Origin Staff"
+  },
+  "Processing at Origin": {
+    tip: "Confirm cargo is ready and arrange for transit.",
+    nextActor: "Logistics Team"
+  },
+  "In Transit": {
+    tip: "Track shipment progress and update status upon arrival.",
+    nextActor: "Transit Operator"
+  },
+  "Arrived Nairobi Hub": {
+    tip: "Inspect cargo and prepare for dispatch to destination.",
+    nextActor: "Nairobi Hub Staff"
+  },
+  "Dispatched": {
+    tip: "Monitor delivery and confirm receipt at destination.",
+    nextActor: "Delivery Team"
+  },
+};
 // src/components/staff/StaffDashboard.jsx
 import React, { useEffect, useState, useCallback } from "react";
+import Modal from "../shared/Modal";
 import { useNavigate } from "react-router-dom";
 import {
   FaBox,
@@ -48,6 +72,7 @@ const STATUS_COLORS = {
 export default function StaffDashboard() {
   const navigate = useNavigate();
 
+  // ═══ Shipment Pipeline State ═══
   const [pickupRequests, setPickupRequests] = useState([]);
   const [pipelineShipments, setPipelineShipments] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -55,7 +80,7 @@ export default function StaffDashboard() {
   const [advancingId, setAdvancingId] = useState(null);
   const [pipelineFilter, setPipelineFilter] = useState("all");
 
-  /* Payment panel state */
+  // ═══ Payment Panel State ═══
   const [paymentInvoices, setPaymentInvoices] = useState([]);
   const [paymentLoading, setPaymentLoading] = useState(true);
   const [paymentSearch, setPaymentSearch] = useState("");
@@ -63,12 +88,18 @@ export default function StaffDashboard() {
   const [expandedInvoice, setExpandedInvoice] = useState(null);
   const [recordingId, setRecordingId] = useState(null);
 
-  /* Payment modal state */
+  // ═══ Payment Modal State ═══
   const [paymentModal, setPaymentModal] = useState(null); // { invoiceId, invoiceNumber }
   const [paymentMethod, setPaymentMethod] = useState("");
   const [paymentReference, setPaymentReference] = useState("");
 
-  /* Sticker reprint state */
+  // ═══ Report Modal State ═══
+  const [reportModal, setReportModal] = useState(null); // { type: 'collected', data: [...] }
+
+  // ═══ Manual Invoice Selection Modal State ═══
+  const [manualInvoiceModal, setManualInvoiceModal] = useState({ open: false, shipment: null });
+
+  // ═══ Sticker Reprint State ═══
   const [stickerShipment, setStickerShipment] = useState(null);
 
   const API_URL = import.meta.env.VITE_API_URL;
@@ -193,7 +224,7 @@ export default function StaffDashboard() {
     }
   };
 
-  /* Payment panel computed values */
+  // ═══ Invoice Filtering & Calculations ═══
   const outstandingInvoices = paymentInvoices.filter(
     (inv) => inv.status === "issued" && inv.invoice_type === "proforma"
   );
@@ -510,6 +541,18 @@ export default function StaffDashboard() {
                             </p>
                           )}
                         </div>
+
+                        {/* Pipeline tip and next actor */}
+                        <div className="mt-2">
+                          <span className="block text-xs text-indigo-700 font-medium">
+                            Tip: {PIPELINE_TIPS[shipment.status]?.tip || "—"}
+                          </span>
+                          {NEXT_STATUS[shipment.status] && (
+                            <span className="block text-xs text-gray-600 mt-0.5">
+                              <span className="font-semibold">Next step:</span> {NEXT_STATUS[shipment.status]} &nbsp;|&nbsp; <span className="font-semibold">Who:</span> {PIPELINE_TIPS[NEXT_STATUS[shipment.status]]?.nextActor || "—"}
+                            </span>
+                          )}
+                        </div>
                       </div>
 
                       {/* Actions */}
@@ -561,6 +604,51 @@ export default function StaffDashboard() {
         </div>
       </div>
 
+      {/* Manual Invoice Selection Modal (moved out of inline function) */}
+      {manualInvoiceModal.open && (
+        <Modal onClose={() => setManualInvoiceModal({ open: false, shipment: null })} title="Select Invoice for Payment">
+          <div className="max-h-96 overflow-y-auto">
+            <p className="mb-2 text-sm text-gray-700">No invoice was automatically matched for this shipment. Please select the correct proforma/unpaid invoice below:</p>
+            <table className="min-w-full text-xs mb-2">
+              <thead>
+                <tr className="bg-amber-100 text-amber-900">
+                  <th className="px-2 py-1 text-left">Invoice #</th>
+                  <th className="px-2 py-1 text-left">Tracking</th>
+                  <th className="px-2 py-1 text-left">Client</th>
+                  <th className="px-2 py-1 text-right">Amount</th>
+                  <th className="px-2 py-1 text-left">Status</th>
+                  <th className="px-2 py-1 text-left">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {paymentInvoices.filter(inv => inv.invoice_type === "proforma" && (inv.status === "issued" || inv.status === "unpaid" || inv.status === "pending")).map(inv => (
+                  <tr key={inv.id} className="border-b last:border-b-0">
+                    <td className="px-2 py-1">{inv.invoice_number}</td>
+                    <td className="px-2 py-1">{inv.cargo_tracking}</td>
+                    <td className="px-2 py-1">{inv.client_name}</td>
+                    <td className="px-2 py-1 text-right">{inv.currency} {Number(inv.total_amount).toFixed(2)}</td>
+                    <td className="px-2 py-1">{inv.status}</td>
+                    <td className="px-2 py-1">
+                      <button
+                        className="px-3 py-1 text-xs font-semibold rounded bg-green-600 text-white hover:bg-green-700 transition"
+                        onClick={() => {
+                          openPaymentModal(inv);
+                          setManualInvoiceModal({ open: false, shipment: null });
+                        }}
+                      >
+                        Select
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            {paymentInvoices.filter(inv => inv.invoice_type === "proforma" && (inv.status === "issued" || inv.status === "unpaid" || inv.status === "pending")).length === 0 && (
+              <div className="text-center text-gray-500 py-6">No proforma/unpaid invoices available.</div>
+            )}
+          </div>
+        </Modal>
+      )}
       {/* ═══ Payment Management Panel ═══ */}
       <div className="px-8 pb-2 pt-6">
         <div className="bg-white rounded-lg shadow overflow-hidden">
@@ -577,31 +665,73 @@ export default function StaffDashboard() {
           <div className="p-6">
             {/* Summary Cards */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-              <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 text-center">
-                <p className="text-2xl font-bold text-orange-600">
-                  {outstandingInvoices.length}
-                </p>
+              {/* Outstanding count card */}
+              <button
+                className="bg-orange-50 border border-orange-200 rounded-lg p-4 text-center w-full focus:outline-none hover:bg-orange-100 transition"
+                onClick={() => setPaymentTab("outstanding")}
+                aria-label="Show outstanding invoices"
+              >
+                <p className="text-2xl font-bold text-orange-600">{outstandingInvoices.length}</p>
                 <p className="text-xs text-gray-500 mt-1">Outstanding</p>
-              </div>
-              <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-center">
-                <p className="text-2xl font-bold text-red-600">
-                  ${totalOutstanding.toFixed(2)}
-                </p>
+              </button>
+              {/* Amount due card */}
+              <button
+                className="bg-red-50 border border-red-200 rounded-lg p-4 text-center w-full focus:outline-none hover:bg-red-100 transition"
+                onClick={() => setPaymentTab("outstanding")}
+                aria-label="Show outstanding amount details"
+              >
+                <p className="text-2xl font-bold text-red-600">${totalOutstanding.toFixed(2)}</p>
                 <p className="text-xs text-gray-500 mt-1">Amount Due</p>
-              </div>
-              <div className="bg-green-50 border border-green-200 rounded-lg p-4 text-center">
-                <p className="text-2xl font-bold text-green-600">
-                  {paidInvoices.length}
-                </p>
+              </button>
+              {/* Paid count card */}
+              <button
+                className="bg-green-50 border border-green-200 rounded-lg p-4 text-center w-full focus:outline-none hover:bg-green-100 transition"
+                onClick={() => setPaymentTab("paid")}
+                aria-label="Show paid invoices"
+              >
+                <p className="text-2xl font-bold text-green-600">{paidInvoices.length}</p>
                 <p className="text-xs text-gray-500 mt-1">Paid</p>
-              </div>
-              <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-4 text-center">
-                <p className="text-2xl font-bold text-emerald-600">
-                  ${totalCollected.toFixed(2)}
-                </p>
+              </button>
+              {/* Collected amount card (adhoc report) */}
+              <button
+                className="bg-emerald-50 border border-emerald-200 rounded-lg p-4 text-center w-full focus:outline-none hover:bg-emerald-100 transition"
+                onClick={() => setReportModal({ type: "collected", data: paidInvoices })}
+                aria-label="Show collected amount details"
+              >
+                <p className="text-2xl font-bold text-emerald-600">${totalCollected.toFixed(2)}</p>
                 <p className="text-xs text-gray-500 mt-1">Collected</p>
-              </div>
+              </button>
             </div>
+      {/* Adhoc report modal for collected details */}
+      {reportModal && reportModal.type === "collected" && (
+        <Modal onClose={() => setReportModal(null)} title="Collected Payments Report">
+          <div className="max-h-96 overflow-y-auto">
+            <table className="min-w-full text-xs">
+              <thead>
+                <tr className="bg-emerald-100 text-emerald-900">
+                  <th className="px-2 py-1 text-left">Invoice #</th>
+                  <th className="px-2 py-1 text-left">Client</th>
+                  <th className="px-2 py-1 text-right">Amount</th>
+                  <th className="px-2 py-1 text-left">Paid At</th>
+                </tr>
+              </thead>
+              <tbody>
+                {reportModal.data.map((inv) => (
+                  <tr key={inv.id} className="border-b last:border-b-0">
+                    <td className="px-2 py-1">{inv.invoice_number}</td>
+                    <td className="px-2 py-1">{inv.client_name}</td>
+                    <td className="px-2 py-1 text-right">{inv.currency} {Number(inv.total_amount).toFixed(2)}</td>
+                    <td className="px-2 py-1">{inv.paid_at ? new Date(inv.paid_at).toLocaleString() : "—"}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            {reportModal.data.length === 0 && (
+              <div className="text-center text-gray-500 py-6">No collected payments found.</div>
+            )}
+          </div>
+        </Modal>
+      )}
 
             {/* Filters & Search */}
             <div className="flex flex-col sm:flex-row gap-3 mb-5">
@@ -815,6 +945,12 @@ export default function StaffDashboard() {
                                 : []),
                               ...(Number(inv.excise_duty) > 0 || inv.invoice_type === "final"
                                 ? [{ label: "Excise Duty", value: inv.excise_duty }]
+                                : []),
+                              ...(Number(inv.import_vat) > 0 || inv.invoice_type === "final"
+                                ? [{ label: "Import VAT (Firm-Paid)", value: inv.import_vat }]
+                                : []),
+                              ...(Number(inv.reimbursable_vat) > 0 || inv.invoice_type === "final"
+                                ? [{ label: "Reimbursable VAT", value: inv.reimbursable_vat }]
                                 : []),
                               ...(Number(inv.rdl) > 0 || inv.invoice_type === "final"
                                 ? [{ label: "RDL", value: inv.rdl }]
